@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { useSound } from '@/motion/SoundDesign'
 import { SPRING } from '@/motion/easings'
 import { cn } from '@/lib/utils'
 
@@ -20,8 +21,9 @@ export function CategoriesSection({
   label = 'Topics',
 }: CategoriesSectionProps) {
   const [active, setActive] = useState<string | null>(null)
-  const [bg, setBg] = useState('var(--color-cream)')
+  const [bg, setBg] = useState('#f6f0e4')
   const reduced = useReducedMotion()
+  const { play } = useSound()
   const previewX = useMotionValue(0)
   const previewY = useMotionValue(0)
   const sx = useSpring(previewX, SPRING.magnetic)
@@ -34,7 +36,7 @@ export function CategoriesSection({
     <section
       id="topics"
       ref={sectionRef}
-      className="relative overflow-hidden px-6 py-32 transition-colors duration-700 md:px-12 md:py-40 lg:px-20"
+      className="relative overflow-hidden bg-[#f6f0e4] px-6 py-32 transition-colors duration-500 md:px-12 md:py-40 lg:px-20"
       style={{ backgroundColor: bg }}
     >
       <span className="mb-16 block font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
@@ -59,10 +61,11 @@ export function CategoriesSection({
                         ? '#ddd5c4'
                         : '#f0ebe0',
                 )
+                play('paper')
               }}
               onMouseLeave={() => {
                 setActive(null)
-                setBg('var(--color-cream)')
+                setBg('#f6f0e4')
               }}
               onMouseMove={(e) => {
                 previewX.set(e.clientX + 28)

@@ -11,9 +11,8 @@ import { cn } from '@/lib/utils'
 gsap.registerPlugin(ScrollTrigger)
 
 /**
- * 3D Twisting Image Stack — editorial prints in perspective.
- * Scroll scrub drives Y-twist / X-tilt / scale / depth.
- * Idle float lives on the inner face so it never fights scroll poses.
+ * 3D episode stack on a locked cream surface.
+ * Never transparent — blank body colours cannot punch through.
  */
 export function EpisodeWaterfall() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -34,8 +33,8 @@ export function EpisodeWaterfall() {
     if (!n) return
 
     const scatter = cards.map((_, i) => ({
-      x: ((i % 3) - 1) * 36 + (i % 2 === 0 ? -22 : 30),
-      yBase: (i - (n - 1) / 2) * 12,
+      x: ((i % 3) - 1) * 40 + (i % 2 === 0 ? -24 : 28),
+      yBase: (i - (n - 1) / 2) * 14,
     }))
 
     const paint = (progress: number) => {
@@ -53,31 +52,36 @@ export function EpisodeWaterfall() {
         const side = dist === 0 ? 0 : dist < 0 ? -1 : 1
         const influence = abs < 0.55 ? 1 : 0.2
 
-        const rotateY = gsap.utils.clamp(-40, 40, dist * 30) + mx * 8 * influence
-        const rotateX = gsap.utils.clamp(-14, 14, dist * -7) + -my * 6 * influence
-        const scale = gsap.utils.interpolate(1, 0.76, Math.min(abs, 1.75) / 1.75)
-        const z = gsap.utils.interpolate(140, -260, Math.min(abs, 2.2) / 2.2)
-        const x = scatter[i].x * 0.4 + side * Math.min(abs, 1.5) * 95
-        const y = scatter[i].yBase + dist * 32
+        // Keep cards in frame — no flying into empty void
+        const rotateY = gsap.utils.clamp(-32, 32, dist * 24) + mx * 6 * influence
+        const rotateX = gsap.utils.clamp(-10, 10, dist * -5) + -my * 4 * influence
+        const scale = gsap.utils.interpolate(1, 0.84, Math.min(abs, 1.5) / 1.5)
+        const z = gsap.utils.interpolate(80, -120, Math.min(abs, 2) / 2)
+        const x = scatter[i].x * 0.5 + side * Math.min(abs, 1.2) * 56
+        const y = scatter[i].yBase + dist * 22
 
-        gsap.set(card, {
+        gsap.to(card, {
           x,
           y,
           z,
           rotateY,
           rotateX,
           scale,
+          duration: 0.4,
+          ease: 'power3.out',
+          overwrite: 'auto',
           transformOrigin: '50% 50%',
           force3D: true,
         })
 
         const face = faces[i]
         if (face) {
-          const blur = 18 + abs * 26
-          const opacity = 0.16 + Math.min(abs, 1.5) * 0.14
-          face.style.boxShadow = `0 ${10 + abs * 12}px ${blur}px rgba(61,43,31,${opacity})`
+          const blur = 16 + abs * 18
+          const opacity = 0.18 + Math.min(abs, 1.2) * 0.1
+          face.style.boxShadow = `0 ${10 + abs * 8}px ${blur}px rgba(61,43,31,${opacity})`
           face.style.filter =
-            abs < 0.4 ? 'brightness(1)' : `brightness(${Math.max(0.82, 1 - abs * 0.1)})`
+            abs < 0.4 ? 'brightness(1)' : `brightness(${Math.max(0.88, 1 - abs * 0.08)})`
+          face.style.opacity = String(Math.max(0.35, 1 - abs * 0.25))
         }
       })
     }
@@ -87,24 +91,22 @@ export function EpisodeWaterfall() {
     const trigger = ScrollTrigger.create({
       trigger: sectionRef.current,
       start: 'top top',
-      end: () => `+=${Math.round(window.innerHeight * n * 0.9)}`,
+      end: () => `+=${Math.round(window.innerHeight * Math.min(n * 0.35, 2.2))}`,
       pin: true,
-      scrub: 1.15,
+      scrub: 0.75,
       anticipatePin: 1,
       invalidateOnRefresh: true,
       onUpdate: (self) => paint(self.progress),
     })
 
-    // Idle gallery float on faces only — cards keep scrub poses
     const floats = faces.map((face, i) =>
       gsap.to(face, {
-        y: 6 + (i % 3) * 2,
-        rotateZ: i % 2 === 0 ? 1.2 : -1.4,
-        duration: 6 + (i % 4),
+        y: 4 + (i % 3),
+        duration: 5 + (i % 3),
         yoyo: true,
         repeat: -1,
         ease: 'sine.inOut',
-        delay: i * 0.4,
+        delay: i * 0.3,
       }),
     )
 
@@ -127,7 +129,6 @@ export function EpisodeWaterfall() {
     const stage = stageRef.current
     stage.addEventListener('mousemove', onMove)
     stage.addEventListener('mouseleave', onLeave)
-
     const onResize = () => ScrollTrigger.refresh()
     window.addEventListener('resize', onResize)
 
@@ -141,9 +142,9 @@ export function EpisodeWaterfall() {
   }, [reduced])
 
   return (
-    <section id="episodes" ref={sectionRef} className="relative bg-cream">
-      <div className="relative flex min-h-screen flex-col px-6 py-24 md:px-12 lg:px-20">
-        <div className="mx-auto mb-8 w-full max-w-7xl shrink-0">
+    <section id="episodes" ref={sectionRef} className="relative bg-[#f6f0e4]">
+      <div className="relative flex min-h-screen flex-col px-6 py-20 md:px-12 lg:px-20">
+        <div className="mx-auto mb-6 w-full max-w-7xl shrink-0">
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
             The Series
           </span>
@@ -152,8 +153,8 @@ export function EpisodeWaterfall() {
           </h2>
         </div>
 
-        <div className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-10 lg:grid-cols-[0.9fr_1.2fr] lg:gap-16">
-          <div className="relative h-[42vh] lg:h-[min(70vh,560px)]">
+        <div className="mx-auto grid w-full max-w-7xl flex-1 grid-cols-1 items-center gap-8 lg:grid-cols-[0.95fr_1.15fr] lg:gap-12">
+          <div className="relative h-[38vh] lg:h-[min(62vh,520px)]">
             {episodes.map((episode, i) => (
               <EpisodeCopy
                 key={episode.id}
@@ -165,10 +166,10 @@ export function EpisodeWaterfall() {
 
           <div
             ref={stageRef}
-            className="relative h-[55vh] w-full lg:h-[75vh]"
+            className="relative h-[50vh] w-full lg:h-[68vh]"
             style={{
-              perspective: '1800px',
-              perspectiveOrigin: '50% 42%',
+              perspective: '1600px',
+              perspectiveOrigin: '50% 45%',
             }}
           >
             <div
@@ -195,16 +196,16 @@ export function EpisodeWaterfall() {
                         facesRef.current[i] = el
                       }}
                       data-card-face
-                      className="relative aspect-[4/5] w-[min(58vw,280px)] overflow-hidden bg-bronze/5 md:w-[300px] lg:w-[320px]"
+                      className="relative aspect-[4/5] w-[min(56vw,260px)] overflow-hidden bg-cream-dark md:w-[280px] lg:w-[300px]"
                     >
                       <img
                         src={episode.imageUrl}
                         alt={episode.title}
                         className="h-full w-full object-cover"
-                        loading="lazy"
+                        loading="eager"
                         draggable={false}
                       />
-                      <span className="absolute bottom-3 left-3 font-mono text-[10px] tracking-widest text-cream/90">
+                      <span className="absolute bottom-3 left-3 font-mono text-[10px] tracking-widest text-cream">
                         EP {String(episode.episodeNumber).padStart(2, '0')}
                       </span>
                     </div>
@@ -231,10 +232,10 @@ function EpisodeCopy({
   return (
     <div
       className={cn(
-        'absolute inset-0 flex flex-col justify-center transition-all duration-700 ease-out',
+        'absolute inset-0 flex flex-col justify-center transition-all duration-500 ease-out',
         isActive
-          ? 'translate-y-0 opacity-100 blur-0'
-          : 'pointer-events-none translate-y-5 opacity-30 blur-[8px]',
+          ? 'translate-y-0 opacity-100'
+          : 'pointer-events-none translate-y-3 opacity-0',
       )}
       aria-hidden={!isActive}
     >

@@ -17,7 +17,7 @@ import {
 
 export function Home() {
   return (
-    <main>
+    <main className="relative bg-[#f6f0e4]">
       <Hero {...defaultHero} />
       <AsHeardOn logos={placeholderLogos} />
       <EpisodeWaterfall />
@@ -27,6 +27,8 @@ export function Home() {
       <ManifestoSection text={MANIFESTO_TEXT} />
       <RevealingFooter
         podcastName={PODCAST_NAME}
+        tagline="Stories are never finished."
+        newsletterHeading="Your inbox deserves slower stories."
         navLinks={[
           { label: 'Episodes', href: '#episodes' },
           { label: 'Gallery', href: '#gallery' },
@@ -36,7 +38,8 @@ export function Home() {
         ]}
         socialLinks={[
           { label: 'Spotify', href: '#' },
-          { label: 'Apple', href: '#' },
+          { label: 'Apple Podcasts', href: '#' },
+          { label: 'YouTube', href: '#' },
           { label: 'Instagram', href: '#' },
         ]}
         legalLinks={[

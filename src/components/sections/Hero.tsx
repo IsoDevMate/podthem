@@ -28,23 +28,25 @@ export interface HeroProps {
 }
 
 function CurvedMask({ progress }: { progress: MotionValue<number> }) {
-  const y = useTransform(progress, [0, 1], ['100%', '-5%'])
-  const smoothY = useSpring(y, { stiffness: 80, damping: 28, mass: 0.8 })
+  // Mask only covers the lower portion — never paints a full empty viewport
+  const y = useTransform(progress, [0, 0.85], ['85%', '-15%'])
+  const smoothY = useSpring(y, { stiffness: 70, damping: 26, mass: 0.95 })
+  const opacity = useTransform(progress, [0.75, 1], [1, 0])
 
   return (
     <motion.div
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[55vh]"
-      style={{ y: smoothY }}
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-[42vh]"
+      style={{ y: smoothY, opacity }}
     >
       <svg
         className="h-full w-full"
-        viewBox="0 0 1440 600"
+        viewBox="0 0 1440 420"
         preserveAspectRatio="none"
         aria-hidden
       >
         <path
-          d="M0,120 Q720,280 1440,120 L1440,600 L0,600 Z"
-          fill="var(--color-cream)"
+          d="M0,80 Q720,200 1440,80 L1440,420 L0,420 Z"
+          fill="#f6f0e4"
         />
       </svg>
     </motion.div>
@@ -71,39 +73,53 @@ export function Hero({
     offset: ['start start', 'end start'],
   })
 
-  const textOpacity = useTransform(scrollYProgress, [0, 0.35], [1, 0])
-  const textY = useTransform(scrollYProgress, [0, 0.5], [0, -80])
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.15])
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.6], [0.25, 0.55])
+  const textOpacity = useTransform(scrollYProgress, [0, 0.55, 0.85], [1, 1, 0])
+  const textY = useTransform(scrollYProgress, [0, 0.85], [0, -48])
+  // Slow cinematic camera push into the scene
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1.04, 1.18])
+  const overlayOpacity = useTransform(scrollYProgress, [0, 0.85], [0.22, 0.45])
+  const rayOpacity = useTransform(scrollYProgress, [0, 0.7], [0.45, 0.15])
 
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const parallaxX = useSpring(mouseX, SPRING.soft)
-  const parallaxY = useSpring(mouseY, SPRING.soft)
+  const parallaxX = useSpring(mouseX, SPRING.heavy)
+  const parallaxY = useSpring(mouseY, SPRING.heavy)
+  const tiltX = useSpring(0, SPRING.soft)
+  const tiltY = useSpring(0, SPRING.soft)
 
   useEffect(() => {
     if (reducedMotion) return
     const onMove = (e: MouseEvent) => {
       const nx = (e.clientX / window.innerWidth - 0.5) * 2
       const ny = (e.clientY / window.innerHeight - 0.5) * 2
-      mouseX.set(nx * 28)
-      mouseY.set(ny * 18)
+      mouseX.set(nx * 36)
+      mouseY.set(ny * 22)
+      tiltY.set(nx * 2.5)
+      tiltX.set(-ny * 2)
     }
     window.addEventListener('mousemove', onMove)
     return () => window.removeEventListener('mousemove', onMove)
-  }, [reducedMotion, mouseX, mouseY])
+  }, [reducedMotion, mouseX, mouseY, tiltX, tiltY])
 
   const wordCount = headlineWordCount(headline)
-  const headlineDuration = wordCount * 0.08 + 0.6
-  const subDelay = reducedMotion ? 0.1 : headlineDuration * 0.3
-  const ctaDelay = reducedMotion ? 0.2 : subDelay + 0.35
+  // Slower reveal — pause for the world to land
+  const headlineDuration = wordCount * 0.12 + 0.9
+  const subDelay = reducedMotion ? 0.1 : headlineDuration * 0.55
+  const ctaDelay = reducedMotion ? 0.2 : subDelay + 0.55
 
   return (
-    <section ref={containerRef} className="relative h-[200vh]">
+    <section ref={containerRef} className="relative h-[145vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <motion.div
-          className="absolute inset-[-4%]"
-          style={{ scale: videoScale, x: parallaxX, y: parallaxY }}
+          className="absolute inset-[-6%]"
+          style={{
+            scale: videoScale,
+            x: parallaxX,
+            y: parallaxY,
+            rotateX: tiltX,
+            rotateY: tiltY,
+            transformPerspective: 1400,
+          }}
         >
           <video
             autoPlay
@@ -121,7 +137,17 @@ export function Hero({
           />
         </motion.div>
 
-        <div className="pointer-events-none absolute inset-0 z-[1] film-grain opacity-[0.35]" />
+        {/* Light rays */}
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-[2]"
+          style={{ opacity: rayOpacity }}
+          aria-hidden
+        >
+          <div className="absolute top-[-20%] left-[15%] h-[140%] w-[28%] rotate-12 bg-gradient-to-b from-cream/25 via-cream/5 to-transparent blur-2xl" />
+          <div className="absolute top-[-10%] right-[20%] h-[120%] w-[18%] -rotate-6 bg-gradient-to-b from-cream/15 via-transparent to-transparent blur-3xl" />
+        </motion.div>
+
+        <div className="pointer-events-none absolute inset-0 z-[3] film-grain opacity-[0.4]" />
 
         <motion.div
           className="relative z-10 flex h-full flex-col justify-end px-6 pb-16 pt-28 md:px-12 lg:px-20"
@@ -132,26 +158,29 @@ export function Hero({
               as="h1"
               lines={headline}
               className="font-serif text-5xl leading-[0.95] text-cream md:text-7xl lg:text-8xl"
-              stagger={0.08}
-              duration={0.6}
+              stagger={0.12}
+              duration={0.85}
             />
 
             <div className="flex flex-col items-start gap-6 md:items-end md:text-right">
-              <AnimatedFadeIn delay={subDelay}>
+              <AnimatedFadeIn delay={subDelay} y={28}>
                 <p className="max-w-xs text-sm leading-relaxed tracking-wide text-cream/80">
                   {subheadline}
                 </p>
               </AnimatedFadeIn>
 
-              <AnimatedFadeIn delay={ctaDelay}>
+              <AnimatedFadeIn delay={ctaDelay} y={22}>
                 <motion.a
                   href={ctaHref}
+                  data-cursor="listen"
+                  data-cursor-label="Listen"
                   className={cn(
                     'inline-flex h-11 items-center border border-cream/40 px-6 text-sm text-cream',
                     'transition-colors hover:bg-cream/10',
                   )}
-                  whileHover={reducedMotion ? undefined : { scale: 1.03 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+                  whileHover={reducedMotion ? undefined : { scale: 1.04, y: -2 }}
+                  whileTap={reducedMotion ? undefined : { scale: 0.96 }}
+                  transition={{ type: 'spring', ...SPRING.button }}
                 >
                   {ctaLabel}
                 </motion.a>
@@ -166,5 +195,4 @@ export function Hero({
   )
 }
 
-/** @deprecated Use Hero from @/components/sections/Hero */
 export const HeroReveal = Hero

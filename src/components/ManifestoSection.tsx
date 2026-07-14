@@ -53,7 +53,7 @@ export function ManifestoSection({
     <section
       id="manifesto"
       ref={containerRef}
-      className="relative bg-cream-dark px-6 py-40 md:px-12 lg:px-20"
+      className="relative bg-[#f6f0e4] px-6 py-40 md:px-12 lg:px-20"
     >
       <div className="mx-auto max-w-5xl">
         <span className="mb-8 block font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
