@@ -263,7 +263,7 @@ function EpisodeCopy({
       <span className="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
         Episode {String(episode.episodeNumber).padStart(2, '0')}
       </span>
-      <h3 className="mb-4 font-serif text-3xl leading-tight text-bronze md:text-4xl lg:text-5xl">
+      <h3 className="mb-4 font-hand text-3xl font-semibold leading-tight tracking-tight text-bronze md:text-4xl lg:text-5xl">
         {episode.title}
       </h3>
       <p className="max-w-md text-sm leading-relaxed text-bronze-muted md:text-base">

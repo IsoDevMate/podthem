@@ -11,6 +11,7 @@ import { Preloader } from '@/components/Preloader'
 import { FloatingAudioPlayer } from '@/components/FloatingAudioPlayer'
 import { ScrollProgress } from '@/components/ScrollProgress'
 import { SiteNav } from '@/components/layout/SiteNav'
+import { SiteFooter } from '@/components/layout/SiteFooter'
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
               <CustomCursor />
               <SiteNav />
               <PageMorphTransition />
+              <SiteFooter />
               <FloatingAudioPlayer />
               <SoundToggle />
             </AudioPlayerProvider>

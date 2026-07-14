@@ -16,6 +16,8 @@ export interface Episode {
   pullQuote?: string
   chapters?: EpisodeChapter[]
   authorNotes?: string
+  /** Category ids: craft | culture | sound | letters */
+  topics?: string[]
 }
 
 export interface UpcomingEpisode {

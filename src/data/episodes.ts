@@ -14,6 +14,7 @@ export const upcomingEpisode: UpcomingEpisode = {
   notifyHref: '#community',
 }
 
+/** Topic ids match homepage Categories (Craft, Culture, Sound Design, Letters) */
 export const episodes: Episode[] = [
   {
     id: 'ep-01',
@@ -28,6 +29,7 @@ export const episodes: Episode[] = [
     pullQuote: 'Silence is not empty — it is full of answers.',
     authorNotes:
       'This episode began as a failed interview. The guest cancelled. What emerged was something more honest.',
+    topics: ['craft', 'sound'],
   },
   {
     id: 'ep-02',
@@ -40,6 +42,7 @@ export const episodes: Episode[] = [
     publishedAt: 'January 23, 2025',
     readingTime: '44 min listen',
     pullQuote: 'Every waveform tells you how it wants to be shaped.',
+    topics: ['sound', 'craft'],
   },
   {
     id: 'ep-03',
@@ -52,6 +55,7 @@ export const episodes: Episode[] = [
     publishedAt: 'February 6, 2025',
     readingTime: '52 min listen',
     pullQuote: 'The city speaks at 3am if you know how to listen.',
+    topics: ['culture', 'sound'],
   },
   {
     id: 'ep-04',
@@ -63,6 +67,7 @@ export const episodes: Episode[] = [
     imageUrl: 'https://images.unsplash.com/photo-1589903308904-0e09654a379d?w=800&q=80',
     publishedAt: 'February 20, 2025',
     readingTime: '36 min listen',
+    topics: ['craft', 'letters'],
   },
   {
     id: 'ep-05',
@@ -74,6 +79,7 @@ export const episodes: Episode[] = [
     imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&q=80',
     publishedAt: 'March 6, 2025',
     readingTime: '41 min listen',
+    topics: ['craft', 'culture'],
   },
   {
     id: 'ep-06',
@@ -85,6 +91,7 @@ export const episodes: Episode[] = [
     imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80',
     publishedAt: 'March 20, 2025',
     readingTime: '47 min listen',
+    topics: ['letters', 'culture'],
   },
 ]
 

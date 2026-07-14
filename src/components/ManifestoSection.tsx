@@ -59,7 +59,7 @@ export function ManifestoSection({
         <span className="mb-8 block font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
           {label}
         </span>
-        <p className="font-serif text-3xl leading-[1.4] md:text-5xl lg:text-6xl lg:leading-[1.35]">
+        <p className="font-hand text-3xl font-semibold leading-[1.35] tracking-tight md:text-5xl lg:text-6xl lg:leading-[1.3]">
           {words.map((word, i) => (
             <IlluminatedWord
               key={`${word}-${i}`}

@@ -129,7 +129,7 @@ export function Nav({ logo, links, overlay = true }: NavProps) {
     const active = isLinkActive(link.href)
     const baseClass = cn(
       'relative text-xs uppercase tracking-[0.2em] transition-colors',
-      mobile && 'font-serif text-3xl tracking-[0.12em] py-2',
+      mobile && 'font-hand text-3xl font-semibold tracking-[0.04em] py-2',
     )
 
     const content = (

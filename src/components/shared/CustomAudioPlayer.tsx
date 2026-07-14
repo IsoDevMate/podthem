@@ -45,7 +45,7 @@ export function CustomAudioPlayer({ episode, chapters, className }: CustomAudioP
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="font-serif text-lg text-bronze">{episode.title}</p>
+          <p className="font-hand text-lg font-semibold text-bronze">{episode.title}</p>
           <p className="font-mono text-[10px] tracking-widest text-bronze-muted">
             EP {String(episode.episodeNumber).padStart(2, '0')}
           </p>

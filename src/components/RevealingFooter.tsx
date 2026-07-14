@@ -136,7 +136,7 @@ export function RevealingFooter({
                   className="h-24 w-20 object-cover md:h-28 md:w-24"
                 />
                 <div>
-                  <h3 className="font-serif text-2xl md:text-3xl">{latest.title}</h3>
+                  <h3 className="font-hand text-2xl font-semibold md:text-3xl">{latest.title}</h3>
                   <p className="mt-1 font-mono text-[10px] tracking-widest text-cream/40">
                     EP {String(latest.episodeNumber).padStart(2, '0')} · ~42 min
                   </p>
@@ -155,7 +155,7 @@ export function RevealingFooter({
 
           {/* Newsletter */}
           <div>
-            <h3 className="mb-3 font-serif text-2xl md:text-3xl">{newsletterHeading}</h3>
+            <h3 className="mb-3 font-hand text-2xl font-semibold md:text-3xl">{newsletterHeading}</h3>
             {submitted ? (
               <p className="font-serif text-xl text-cream/80">
                 You&apos;re on the list. We write rarely, and carefully.

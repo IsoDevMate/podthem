@@ -15,7 +15,7 @@ export const DEMO_AUDIO =
 
 export const defaultNavLinks: NavLink[] = [
   { label: 'Home', href: '/' },
-  { label: 'Episodes', href: '#episodes' },
+  { label: 'Episodes', href: '/episodes' },
   { label: 'Upcoming', href: '#upcoming' },
   { label: 'Topics', href: '#topics' },
   { label: 'Listen', href: '/listen' },
