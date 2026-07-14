@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { useScrollReady, useScrollRefresh } from '@/motion/SmoothScrollProvider'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -28,9 +29,12 @@ export function HorizontalGallery({
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
+  const scrollReady = useScrollReady()
+  const refreshScroll = useScrollRefresh()
 
   useEffect(() => {
-    if (reduced || !sectionRef.current || !trackRef.current) return
+    if (!scrollReady || reduced || !sectionRef.current || !trackRef.current) return
+    if (sectionRef.current.closest('[data-outgoing-page]')) return
 
     const section = sectionRef.current
     const track = trackRef.current
@@ -53,14 +57,19 @@ export function HorizontalGallery({
       })
     }, section)
 
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh(true)
+      refreshScroll()
+    })
+
     return () => ctx.revert()
-  }, [reduced, items.length])
+  }, [reduced, scrollReady, refreshScroll, items.length])
 
   return (
     <section
       id="gallery"
       ref={sectionRef}
-      className="relative overflow-hidden bg-[#f6f0e4]"
+      className="relative overflow-hidden bg-gradient-to-b from-[#f6f0e4] via-[#ebe3d2] to-[#e0d4c0]"
     >
       <div className="flex h-screen flex-col justify-center">
         <div className="relative z-20 mb-8 px-6 md:px-12 lg:px-20">

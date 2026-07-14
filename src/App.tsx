@@ -1,5 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 import { SmoothScrollProvider } from '@/motion/SmoothScrollProvider'
+import { ScrollLayoutSync } from '@/motion/ScrollLayoutSync'
+import { PageMorphTransition } from '@/motion/PageMorphTransition'
 import { AudioPlayerProvider } from '@/motion/AudioPlayerProvider'
 import { SoundProvider, SoundToggle } from '@/motion/SoundDesign'
 import { CustomCursor } from '@/components/CustomCursor'
@@ -7,8 +9,6 @@ import { Preloader } from '@/components/Preloader'
 import { FloatingAudioPlayer } from '@/components/FloatingAudioPlayer'
 import { ScrollProgress } from '@/components/ScrollProgress'
 import { SiteNav } from '@/components/layout/SiteNav'
-import { Home } from '@/pages/Home'
-import { EpisodePage } from '@/pages/EpisodePage'
 
 export default function App() {
   return (
@@ -17,13 +17,11 @@ export default function App() {
         <SoundProvider>
           <AudioPlayerProvider>
             <Preloader />
+            <ScrollLayoutSync />
             <ScrollProgress />
             <CustomCursor />
             <SiteNav />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/episode/:id" element={<EpisodePage />} />
-            </Routes>
+            <PageMorphTransition />
             <FloatingAudioPlayer />
             <SoundToggle />
           </AudioPlayerProvider>

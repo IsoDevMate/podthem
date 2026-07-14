@@ -16,6 +16,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
     if (reduced) {
       setDone(true)
       onComplete?.()
+      window.dispatchEvent(new Event('podthem:preloader-complete'))
       return
     }
 
@@ -27,6 +28,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
           setDone(true)
           document.body.style.overflow = ''
           onComplete?.()
+          window.dispatchEvent(new Event('podthem:preloader-complete'))
           // Bloom: nudge page content in
           gsap.fromTo(
             'main',

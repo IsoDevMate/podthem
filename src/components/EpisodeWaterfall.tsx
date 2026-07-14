@@ -6,6 +6,8 @@ import type { Episode } from '@/types/episode'
 import { episodes } from '@/data/episodes'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useAudioPlayer } from '@/motion/AudioPlayerProvider'
+import { useScrollReady, useScrollRefresh } from '@/motion/SmoothScrollProvider'
+import { onMorphNavigate } from '@/motion/morphNavigation'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -21,11 +23,14 @@ export function EpisodeWaterfall() {
   const facesRef = useRef<(HTMLDivElement | null)[]>([])
   const [activeIndex, setActiveIndex] = useState(0)
   const reduced = useReducedMotion()
+  const scrollReady = useScrollReady()
+  const refreshScroll = useScrollRefresh()
   const mouseRef = useRef({ x: 0, y: 0 })
   const progressRef = useRef(0)
 
   useEffect(() => {
-    if (reduced || !sectionRef.current || !stageRef.current) return
+    if (!scrollReady || reduced || !sectionRef.current || !stageRef.current) return
+    if (sectionRef.current.closest('[data-outgoing-page]')) return
 
     const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[]
     const faces = facesRef.current.filter(Boolean) as HTMLDivElement[]
@@ -99,6 +104,11 @@ export function EpisodeWaterfall() {
       onUpdate: (self) => paint(self.progress),
     })
 
+    requestAnimationFrame(() => {
+      ScrollTrigger.refresh(true)
+      refreshScroll()
+    })
+
     const floats = faces.map((face, i) =>
       gsap.to(face, {
         y: 4 + (i % 3),
@@ -138,11 +148,14 @@ export function EpisodeWaterfall() {
       stage.removeEventListener('mousemove', onMove)
       stage.removeEventListener('mouseleave', onLeave)
       window.removeEventListener('resize', onResize)
+      requestAnimationFrame(() => {
+        ScrollTrigger.refresh(true)
+      })
     }
-  }, [reduced])
+  }, [reduced, scrollReady, refreshScroll])
 
   return (
-    <section id="episodes" ref={sectionRef} className="relative bg-[#f6f0e4]">
+    <section id="episodes" ref={sectionRef} className="relative bg-gradient-to-b from-[#f6f0e4] via-[#f6f0e4] to-[#ebe3d2]">
       <div className="relative flex min-h-screen flex-col px-6 py-20 md:px-12 lg:px-20">
         <div className="mx-auto mb-6 w-full max-w-7xl shrink-0">
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
@@ -190,6 +203,7 @@ export function EpisodeWaterfall() {
                     data-cursor="listen"
                     data-cursor-label="Listen"
                     className="block"
+                    onClick={(e) => onMorphNavigate(e, 'card', episode.imageUrl)}
                   >
                     <div
                       ref={(el) => {
@@ -263,6 +277,7 @@ function EpisodeCopy({
           to={`/episode/${episode.id}`}
           className="inline-flex text-xs uppercase tracking-[0.2em] text-bronze-muted"
           tabIndex={isActive ? 0 : -1}
+          onClick={(e) => onMorphNavigate(e, 'card', episode.imageUrl)}
         >
           Details
         </Link>

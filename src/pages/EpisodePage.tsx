@@ -1,6 +1,8 @@
 import { useParams, Link } from 'react-router-dom'
 import { episodes } from '@/data/episodes'
 import { Button } from '@/components/ui/button'
+import { EditorialReveal } from '@/components/shared/EditorialReveal'
+import { onMorphNavigate } from '@/motion/morphNavigation'
 
 export function EpisodePage() {
   const { id } = useParams<{ id: string }>()
@@ -10,7 +12,11 @@ export function EpisodePage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-cream px-6">
         <h1 className="font-serif text-4xl text-bronze">Episode not found</h1>
-        <Link to="/" className="mt-6 text-sm uppercase tracking-widest text-bronze-muted">
+        <Link
+          to="/"
+          className="mt-6 text-sm uppercase tracking-widest text-bronze-muted"
+          onClick={(e) => onMorphNavigate(e, 'link')}
+        >
           ← Back home
         </Link>
       </div>
@@ -23,9 +29,13 @@ export function EpisodePage() {
         <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
           Episode {String(episode.episodeNumber).padStart(2, '0')}
         </span>
-        <h1 className="mt-4 font-serif text-5xl leading-tight text-bronze md:text-7xl">
+        <EditorialReveal
+          as="h1"
+          className="mt-4 font-serif text-5xl leading-tight text-bronze md:text-7xl"
+          lineStagger={0.09}
+        >
           {episode.title}
-        </h1>
+        </EditorialReveal>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-bronze-muted">
           {episode.description}
         </p>
