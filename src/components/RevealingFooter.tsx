@@ -1,4 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, useInView } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ReturnToBeginning } from '@/components/ScrollProgress'
@@ -202,15 +203,25 @@ export function RevealingFooter({
 
         <div className="mt-16 flex flex-col items-start justify-between gap-8 border-t border-cream/10 pt-10 md:flex-row md:items-end">
           <nav className="flex flex-wrap gap-x-6 gap-y-2">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm text-cream/55 transition-colors hover:text-cream"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) =>
+              link.href.startsWith('#') ? (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm text-cream/55 transition-colors hover:text-cream"
+                >
+                  {link.label}
+                </a>
+              ) : (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="text-sm text-cream/55 transition-colors hover:text-cream"
+                >
+                  {link.label}
+                </Link>
+              ),
+            )}
           </nav>
 
           <div className="text-right">

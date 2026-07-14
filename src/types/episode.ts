@@ -1,3 +1,8 @@
+export interface EpisodeChapter {
+  title: string
+  startSeconds: number
+}
+
 export interface Episode {
   id: string
   episodeNumber: number
@@ -5,4 +10,10 @@ export interface Episode {
   description: string
   audioUrl: string
   imageUrl: string
+  publishedAt?: string
+  readingTime?: string
+  transcript?: string
+  pullQuote?: string
+  chapters?: EpisodeChapter[]
+  authorNotes?: string
 }

@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
-import { useScrollReady, useScrollRefresh } from '@/motion/SmoothScrollProvider'
+import { usePinReady } from '@/hooks/usePinReady'
+import { useScrollRefresh } from '@/motion/SmoothScrollProvider'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -29,11 +30,11 @@ export function HorizontalGallery({
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const reduced = useReducedMotion()
-  const scrollReady = useScrollReady()
+  const pinReady = usePinReady()
   const refreshScroll = useScrollRefresh()
 
   useEffect(() => {
-    if (!scrollReady || reduced || !sectionRef.current || !trackRef.current) return
+    if (!pinReady || reduced || !sectionRef.current || !trackRef.current) return
     if (sectionRef.current.closest('[data-outgoing-page]')) return
 
     const section = sectionRef.current
@@ -63,7 +64,7 @@ export function HorizontalGallery({
     })
 
     return () => ctx.revert()
-  }, [reduced, scrollReady, refreshScroll, items.length])
+  }, [pinReady, reduced, refreshScroll, items.length])
 
   return (
     <section

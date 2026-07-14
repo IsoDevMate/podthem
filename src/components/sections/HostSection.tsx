@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { usePinReady } from '@/hooks/usePinReady'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -22,9 +23,10 @@ export function HostSection({
 }: HostSectionProps) {
   const sectionRef = useRef<HTMLElement>(null)
   const reduced = useReducedMotion()
+  const pinReady = usePinReady()
 
   useEffect(() => {
-    if (reduced || !sectionRef.current) return
+    if (!pinReady || reduced || !sectionRef.current) return
     const section = sectionRef.current
 
     const ctx = gsap.context(() => {
@@ -93,7 +95,7 @@ export function HostSection({
     }, section)
 
     return () => ctx.revert()
-  }, [reduced])
+  }, [pinReady, reduced])
 
   const nameLines = name.split(' ')
 

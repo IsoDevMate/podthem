@@ -29,7 +29,7 @@ export function AsHeardOn({
   }, [controls])
 
   return (
-    <section className="relative z-10 bg-[#f6f0e4] py-14 md:py-16">
+    <section className="relative z-10 bg-gradient-to-b from-[#f6f0e4] to-[#f0ead8] py-14 md:py-16">
       <p className="mb-10 text-center font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
         {label}
       </p>

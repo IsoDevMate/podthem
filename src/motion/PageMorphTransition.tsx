@@ -6,6 +6,21 @@ import { useLenis, refreshAllScroll } from '@/motion/SmoothScrollProvider'
 import { consumeMorphOrigin } from '@/motion/morphNavigation'
 import { Home } from '@/pages/Home'
 import { EpisodePage } from '@/pages/EpisodePage'
+import { EpisodesPage } from '@/pages/EpisodesPage'
+import { AboutPage } from '@/pages/AboutPage'
+import { TeamPage } from '@/pages/TeamPage'
+import { ContactPage } from '@/pages/ContactPage'
+
+const ROUTES = (
+  <>
+    <Route path="/" element={<Home />} />
+    <Route path="/episodes" element={<EpisodesPage />} />
+    <Route path="/episode/:id" element={<EpisodePage />} />
+    <Route path="/about" element={<AboutPage />} />
+    <Route path="/team" element={<TeamPage />} />
+    <Route path="/contact" element={<ContactPage />} />
+  </>
+)
 
 /**
  * Dual-layer cinematic route morph — outgoing and incoming pages coexist.
@@ -223,17 +238,13 @@ export function PageMorphTransition() {
           className="pointer-events-none absolute inset-0 z-30 min-h-screen will-change-transform"
           aria-hidden
         >
-          <Routes location={outgoingLocation}>
-            <Route path="/" element={<Home />} />
-            <Route path="/episode/:id" element={<EpisodePage />} />
-          </Routes>
+          <Routes location={outgoingLocation}>{ROUTES}</Routes>
         </div>
       )}
 
       <div ref={incomingRef} className="relative z-10 min-h-screen will-change-transform">
         <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Home />} />
-          <Route path="/episode/:id" element={<EpisodePage />} />
+          {ROUTES}
         </Routes>
       </div>
     </div>

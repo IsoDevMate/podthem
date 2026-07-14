@@ -13,10 +13,10 @@ import { SPRING } from '@/motion/easings'
 import { cn } from '@/lib/utils'
 
 const DEFAULT_VIDEO =
-  'https://cdn.coverr.co/videos/coverr-close-up-of-a-person-spreading-butter-on-bread-9766/1080p.mp4'
+  'https://cdn.coverr.co/videos/coverr-a-man-recording-a-podcast-4695/1080p.mp4'
 
 const DEFAULT_POSTER =
-  'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920&q=80'
+  'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=1920&q=80'
 
 export interface HeroProps {
   headline: string | string[]

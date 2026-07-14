@@ -6,7 +6,8 @@ import type { Episode } from '@/types/episode'
 import { episodes } from '@/data/episodes'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { useAudioPlayer } from '@/motion/AudioPlayerProvider'
-import { useScrollReady, useScrollRefresh } from '@/motion/SmoothScrollProvider'
+import { usePinReady } from '@/hooks/usePinReady'
+import { useScrollRefresh } from '@/motion/SmoothScrollProvider'
 import { onMorphNavigate } from '@/motion/morphNavigation'
 import { cn } from '@/lib/utils'
 
@@ -23,13 +24,13 @@ export function EpisodeWaterfall() {
   const facesRef = useRef<(HTMLDivElement | null)[]>([])
   const [activeIndex, setActiveIndex] = useState(0)
   const reduced = useReducedMotion()
-  const scrollReady = useScrollReady()
+  const pinReady = usePinReady()
   const refreshScroll = useScrollRefresh()
   const mouseRef = useRef({ x: 0, y: 0 })
   const progressRef = useRef(0)
 
   useEffect(() => {
-    if (!scrollReady || reduced || !sectionRef.current || !stageRef.current) return
+    if (!pinReady || reduced || !sectionRef.current || !stageRef.current) return
     if (sectionRef.current.closest('[data-outgoing-page]')) return
 
     const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[]
@@ -152,7 +153,7 @@ export function EpisodeWaterfall() {
         ScrollTrigger.refresh(true)
       })
     }
-  }, [reduced, scrollReady, refreshScroll])
+  }, [pinReady, reduced, refreshScroll])
 
   return (
     <section id="episodes" ref={sectionRef} className="relative bg-gradient-to-b from-[#f6f0e4] via-[#f6f0e4] to-[#ebe3d2]">

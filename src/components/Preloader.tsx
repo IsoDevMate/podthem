@@ -29,17 +29,11 @@ export function Preloader({ onComplete }: PreloaderProps) {
           document.body.style.overflow = ''
           onComplete?.()
           window.dispatchEvent(new Event('podthem:preloader-complete'))
-          // Bloom: nudge page content in
+          // Gentle fade-in — avoid transform on <main> (breaks ScrollTrigger pins)
           gsap.fromTo(
             'main',
-            { opacity: 0.4, scale: 0.985, filter: 'blur(6px)' },
-            {
-              opacity: 1,
-              scale: 1,
-              filter: 'blur(0px)',
-              duration: 1.1,
-              ease: 'power3.out',
-            },
+            { opacity: 0 },
+            { opacity: 1, duration: 0.9, ease: 'power2.out' },
           )
         }, 120)
       },
