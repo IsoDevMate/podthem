@@ -14,7 +14,7 @@ export function AboutSection() {
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
             {label}
           </span>
-          <h2 className="mt-3 font-serif text-4xl leading-tight text-bronze md:text-6xl">
+          <h2 className="mt-3 font-hand text-4xl font-semibold leading-tight tracking-tight text-bronze md:text-6xl">
             {headline}
           </h2>
         </div>

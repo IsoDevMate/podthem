@@ -17,3 +17,12 @@ export interface Episode {
   chapters?: EpisodeChapter[]
   authorNotes?: string
 }
+
+export interface UpcomingEpisode {
+  guest: string
+  guestTitle?: string
+  topic: string
+  startsAt: string
+  timezoneLabel: string
+  notifyHref?: string
+}

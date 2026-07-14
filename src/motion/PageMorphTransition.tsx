@@ -10,6 +10,7 @@ import { EpisodesPage } from '@/pages/EpisodesPage'
 import { AboutPage } from '@/pages/AboutPage'
 import { TeamPage } from '@/pages/TeamPage'
 import { ContactPage } from '@/pages/ContactPage'
+import { ListenPage } from '@/pages/ListenPage'
 
 const ROUTES = (
   <>
@@ -19,6 +20,7 @@ const ROUTES = (
     <Route path="/about" element={<AboutPage />} />
     <Route path="/team" element={<TeamPage />} />
     <Route path="/contact" element={<ContactPage />} />
+    <Route path="/listen" element={<ListenPage />} />
   </>
 )
 

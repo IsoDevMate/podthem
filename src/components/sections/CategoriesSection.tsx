@@ -74,7 +74,7 @@ export function CategoriesSection({
             >
               <span
                 className={cn(
-                  'inline-block font-serif text-5xl text-bronze transition-transform duration-500 md:text-7xl lg:text-8xl',
+                  'inline-block font-hand text-5xl font-semibold tracking-tight text-bronze transition-transform duration-500 md:text-7xl lg:text-8xl',
                   !reduced && 'group-hover:scale-x-[1.04] group-hover:rotate-[-1deg]',
                   active && active !== cat.id && 'opacity-30',
                 )}

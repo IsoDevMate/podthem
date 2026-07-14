@@ -1,26 +1,18 @@
 import { Hero } from '@/components/sections/Hero'
-import { AsHeardOn } from '@/components/sections/AsHeardOn'
-import { AboutSection } from '@/components/sections/AboutSection'
+import { UpcomingEpisodeStrip } from '@/components/sections/UpcomingEpisodeStrip'
 import { EpisodeWaterfall } from '@/components/EpisodeWaterfall'
 import { HorizontalGallery } from '@/components/sections/HorizontalGallery'
 import { HostSection } from '@/components/sections/HostSection'
-import { TeamSection } from '@/components/sections/TeamSection'
-import { BehindScenesSection } from '@/components/sections/BehindScenesSection'
-import { TimelineSection } from '@/components/sections/TimelineSection'
-import { FeaturedGuestsSection } from '@/components/sections/FeaturedGuestsSection'
 import { CategoriesSection } from '@/components/sections/CategoriesSection'
-import { TestimonialsSection } from '@/components/sections/TestimonialsSection'
 import { ManifestoSection } from '@/components/ManifestoSection'
-import { CommunitySection, FAQSection } from '@/components/sections/CommunityFAQ'
 import { RevealingFooter } from '@/components/RevealingFooter'
 import { HashScrollHandler } from '@/motion/HashScrollHandler'
-import { MANIFESTO_TEXT, PODCAST_NAME } from '@/data/episodes'
+import { MANIFESTO_TEXT, PODCAST_NAME, upcomingEpisode } from '@/data/episodes'
 import {
   categories,
   defaultHero,
   galleryItems,
   hostContent,
-  placeholderLogos,
 } from '@/data/site'
 
 export function Home() {
@@ -28,20 +20,16 @@ export function Home() {
     <main className="relative bg-[#f6f0e4]">
       <HashScrollHandler />
       <Hero {...defaultHero} />
-      <AsHeardOn logos={placeholderLogos} />
-      <AboutSection />
-      <EpisodeWaterfall />
-      <HorizontalGallery items={galleryItems} />
+      <UpcomingEpisodeStrip upcoming={upcomingEpisode} />
+      <EpisodeWaterfall label="What's new" headline="Latest episodes" />
+      <HorizontalGallery
+        items={galleryItems}
+        label="What have I missed?"
+        headline="Lookbook"
+      />
       <HostSection {...hostContent} />
-      <TeamSection />
-      <BehindScenesSection />
-      <TimelineSection />
-      <FeaturedGuestsSection />
-      <CategoriesSection categories={categories} />
-      <TestimonialsSection />
+      <CategoriesSection categories={categories} label="What will I learn?" />
       <ManifestoSection text={MANIFESTO_TEXT} />
-      <CommunitySection />
-      <FAQSection />
       <RevealingFooter
         podcastName={PODCAST_NAME}
         tagline="Stories are never finished."
@@ -49,6 +37,7 @@ export function Home() {
         navLinks={[
           { label: 'About', href: '/about' },
           { label: 'Episodes', href: '#episodes' },
+          { label: 'Listen', href: '/listen' },
           { label: 'Team', href: '/team' },
           { label: 'Contact', href: '/contact' },
           { label: 'Manifesto', href: '#manifesto' },

@@ -77,7 +77,7 @@ export function HorizontalGallery({
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
             {label}
           </span>
-          <h2 className="mt-2 font-serif text-4xl text-bronze md:text-5xl">
+          <h2 className="mt-2 font-hand text-4xl font-semibold tracking-tight text-bronze md:text-5xl">
             {headline}
           </h2>
         </div>

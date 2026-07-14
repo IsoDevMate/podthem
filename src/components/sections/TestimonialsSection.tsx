@@ -2,7 +2,13 @@ import { motion } from 'framer-motion'
 import { testimonials } from '@/data/site'
 import { OptimizedImage } from '@/components/shared/OptimizedImage'
 
-export function TestimonialsSection() {
+export function TestimonialsSection({
+  label = 'Testimonials',
+  headline = 'What listeners say',
+}: {
+  label?: string
+  headline?: string
+} = {}) {
   return (
     <section
       id="testimonials"
@@ -10,9 +16,9 @@ export function TestimonialsSection() {
     >
       <div className="mx-auto max-w-7xl">
         <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
-          Testimonials
+          {label}
         </span>
-        <h2 className="mt-3 font-serif text-4xl text-bronze md:text-5xl">What listeners say</h2>
+        <h2 className="mt-3 font-serif text-4xl text-bronze md:text-5xl">{headline}</h2>
 
         <div className="mt-16 space-y-16">
           {testimonials.map((t, i) => (

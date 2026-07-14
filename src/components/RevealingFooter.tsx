@@ -88,7 +88,7 @@ export function RevealingFooter({
 
       <div className="relative z-10 mx-auto max-w-7xl">
         <motion.p
-          className="mb-10 text-center font-serif text-2xl italic text-cream/70 md:text-4xl"
+          className="mb-10 text-center font-hand text-2xl font-semibold tracking-tight text-cream/80 md:text-4xl"
           initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
           animate={
             isInView

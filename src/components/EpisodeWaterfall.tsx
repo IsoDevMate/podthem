@@ -17,7 +17,13 @@ gsap.registerPlugin(ScrollTrigger)
  * 3D episode stack on a locked cream surface.
  * Never transparent — blank body colours cannot punch through.
  */
-export function EpisodeWaterfall() {
+export function EpisodeWaterfall({
+  label = 'The Series',
+  headline = 'Episode Gallery',
+}: {
+  label?: string
+  headline?: string
+} = {}) {
   const sectionRef = useRef<HTMLElement>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
@@ -160,10 +166,10 @@ export function EpisodeWaterfall() {
       <div className="relative flex min-h-screen flex-col px-6 py-20 md:px-12 lg:px-20">
         <div className="mx-auto mb-6 w-full max-w-7xl shrink-0">
           <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
-            The Series
+            {label}
           </span>
-          <h2 className="mt-2 font-serif text-4xl text-bronze md:text-5xl">
-            Episode Gallery
+          <h2 className="mt-2 font-hand text-4xl font-semibold tracking-tight text-bronze md:text-5xl">
+            {headline}
           </h2>
         </div>
 

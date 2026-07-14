@@ -14,12 +14,11 @@ export const DEMO_AUDIO =
   'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
 
 export const defaultNavLinks: NavLink[] = [
+  { label: 'Home', href: '/' },
   { label: 'Episodes', href: '#episodes' },
-  { label: 'Gallery', href: '#gallery' },
-  { label: 'Host', href: '#host' },
+  { label: 'Upcoming', href: '#upcoming' },
   { label: 'Topics', href: '#topics' },
-  { label: 'Manifesto', href: '#manifesto' },
-  { label: 'Newsletter', href: '#footer' },
+  { label: 'Listen', href: '/listen' },
 ]
 
 export const defaultHero: HeroProps = {

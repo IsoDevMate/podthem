@@ -138,7 +138,7 @@ export function HostSection({
           >
             {role}
           </p>
-          <h2 className="mb-8 font-serif text-5xl leading-[0.95] md:text-7xl">
+          <h2 className="mb-8 font-hand text-5xl font-semibold leading-[0.95] tracking-tight md:text-7xl">
             {nameLines.map((line) => (
               <span key={line} className="block overflow-hidden">
                 <span data-host-name-line className="inline-block">

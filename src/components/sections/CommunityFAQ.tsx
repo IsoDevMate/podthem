@@ -12,7 +12,7 @@ export function CommunitySection() {
     >
       <div className="mx-auto max-w-7xl">
         <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
-          Community
+          How can I listen?
         </span>
         <h2 className="mt-3 font-serif text-4xl text-bronze md:text-5xl">Join the conversation</h2>
 
@@ -26,13 +26,19 @@ export function CommunitySection() {
         </div>
 
         <div className="mt-12 flex flex-wrap gap-4">
-          {['Spotify', 'Apple Podcasts', 'YouTube', 'Instagram', 'Discord'].map((p) => (
+          {[
+            { label: 'Spotify', href: '#' },
+            { label: 'Apple Podcasts', href: '#' },
+            { label: 'YouTube', href: '#' },
+            { label: 'RSS', href: '#' },
+            { label: 'Newsletter', href: '#footer' },
+          ].map((p) => (
             <a
-              key={p}
-              href="#"
+              key={p.label}
+              href={p.href}
               className="border border-bronze/20 px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-bronze transition-colors hover:bg-bronze hover:text-cream"
             >
-              {p}
+              {p.label}
             </a>
           ))}
         </div>
@@ -45,14 +51,19 @@ export function FAQSection() {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
-    <section id="faq" className="relative bg-gradient-to-b from-[#f6f0e4] to-[#ebe3d2] px-6 py-28 md:px-12 lg:px-20">
-      <div className="mx-auto max-w-3xl">
-        <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
+    <section
+      id="faq"
+      className="relative bg-[#1a1510] px-6 pb-28 pt-16 md:px-12 lg:px-20"
+    >
+      <div className="mx-auto max-w-3xl border-t border-cream/10 pt-16">
+        <span className="font-mono text-xs uppercase tracking-[0.3em] text-cream/40">
           FAQ
         </span>
-        <h2 className="mt-3 font-serif text-4xl text-bronze md:text-5xl">Common questions</h2>
+        <h2 className="mt-3 font-hand text-4xl font-semibold tracking-tight text-cream md:text-5xl">
+          Common questions
+        </h2>
 
-        <div className="mt-12 divide-y divide-bronze/15">
+        <div className="mt-12 divide-y divide-cream/10">
           {faqItems.map((item, i) => {
             const isOpen = open === i
             return (
@@ -63,10 +74,12 @@ export function FAQSection() {
                   onClick={() => setOpen(isOpen ? null : i)}
                   aria-expanded={isOpen}
                 >
-                  <span className="font-serif text-xl text-bronze md:text-2xl">{item.q}</span>
+                  <span className="font-hand text-2xl font-semibold text-cream md:text-3xl">
+                    {item.q}
+                  </span>
                   <ChevronDown
                     className={cn(
-                      'mt-1 shrink-0 transition-transform duration-300',
+                      'mt-1 shrink-0 text-cream/50 transition-transform duration-300',
                       isOpen && 'rotate-180',
                     )}
                     size={20}
@@ -78,7 +91,7 @@ export function FAQSection() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="overflow-hidden pt-3 text-sm leading-relaxed text-bronze-muted"
+                      className="overflow-hidden pt-3 text-sm leading-relaxed text-cream/55"
                     >
                       {item.a}
                     </motion.p>

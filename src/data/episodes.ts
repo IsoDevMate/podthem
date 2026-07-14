@@ -1,8 +1,18 @@
-import type { Episode } from '@/types/episode'
+import type { Episode, UpcomingEpisode } from '@/types/episode'
 
 export const PODCAST_NAME = 'Podthem'
 
 const DEMO_AUDIO = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'
+
+/** Next recording — fills “Who’s next?” without replacing existing episode UI */
+export const upcomingEpisode: UpcomingEpisode = {
+  guest: 'Dr. Jane Smith',
+  guestTitle: 'AI Researcher',
+  topic: 'AI in Africa',
+  startsAt: '2026-07-18T20:00:00+03:00',
+  timezoneLabel: 'EAT',
+  notifyHref: '#community',
+}
 
 export const episodes: Episode[] = [
   {

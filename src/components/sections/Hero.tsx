@@ -157,7 +157,7 @@ export function Hero({
             <AnimatedText
               as="h1"
               lines={headline}
-              className="font-serif text-5xl leading-[0.95] text-cream md:text-7xl lg:text-8xl"
+              className="font-hand text-5xl font-semibold leading-[0.95] tracking-tight text-cream md:text-7xl lg:text-8xl"
               stagger={0.12}
               duration={0.85}
             />
