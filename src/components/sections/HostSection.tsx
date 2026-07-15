@@ -93,7 +93,7 @@ export function HostSection({
         <span className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-cream/40" />
       </div>
 
-      <div className="relative grid min-h-screen grid-cols-1 items-start gap-10 px-6 py-20 md:items-end md:px-12 lg:grid-cols-2 lg:items-center lg:px-20">
+      <div className="relative grid min-h-[auto] grid-cols-1 items-start gap-10 px-6 py-16 md:min-h-screen md:items-end md:px-12 md:py-20 lg:grid-cols-2 lg:items-center lg:px-20">
         <HostPortraitReveal
           name={name}
           role={role}
@@ -102,7 +102,7 @@ export function HostSection({
           profileHref="/about"
           episodesHref="/episodes"
           revealOnView={true}
-          className="justify-self-center lg:justify-self-start"
+          className="w-full max-w-sm justify-self-center sm:max-w-md lg:max-w-xl lg:justify-self-start"
         />
 
         <div className="relative pb-8 lg:pb-0">

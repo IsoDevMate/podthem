@@ -1,6 +1,7 @@
 import { Hero } from '@/components/sections/Hero'
 import { UpcomingEpisodeStrip } from '@/components/sections/UpcomingEpisodeStrip'
 import { EpisodeWaterfall } from '@/components/EpisodeWaterfall'
+import { MissedEpisodesSection } from '@/components/sections/MissedEpisodesSection'
 import { HorizontalGallery } from '@/components/sections/HorizontalGallery'
 import { HostSection } from '@/components/sections/HostSection'
 import { CategoriesSection } from '@/components/sections/CategoriesSection'
@@ -16,11 +17,12 @@ import {
 
 export function Home() {
   return (
-    <main className="relative bg-[#f6f0e4]">
+    <main className="relative overflow-x-clip bg-[#f6f0e4]">
       <HashScrollHandler />
       <Hero {...defaultHero} />
       <UpcomingEpisodeStrip upcoming={upcomingEpisode} />
       <EpisodeWaterfall label="What's new" headline="Latest episodes" />
+      <MissedEpisodesSection />
       <HorizontalGallery
         items={galleryItems}
         label="What have I missed?"

@@ -4,9 +4,11 @@ import { motion, useInView } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { ReturnToBeginning } from '@/components/ScrollProgress'
 import { useAudioPlayer } from '@/motion/AudioPlayerProvider'
+import { useCursorPrefs } from '@/motion/CursorPrefs'
 import { episodes } from '@/data/episodes'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { SPRING } from '@/motion/easings'
+import { OptimizedImage } from '@/components/shared/OptimizedImage'
 import { cn } from '@/lib/utils'
 
 export interface FooterLink {
@@ -46,6 +48,7 @@ export function RevealingFooter({
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
   const { playEpisode, current } = useAudioPlayer()
+  const { mode, setMode } = useCursorPrefs()
   const latest = current ?? episodes[0]
 
   const letters = podcastName.toUpperCase().split('')
@@ -77,7 +80,7 @@ export function RevealingFooter({
         transition={{ duration: 28, ease: 'linear', repeat: Infinity, repeatType: 'reverse' }}
       >
         <img
-          src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1800&q=80"
+          src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=1800&q=80"
           alt=""
           className="h-full w-full object-cover"
         />
@@ -106,7 +109,7 @@ export function RevealingFooter({
             {letters.map((letter, i) => (
               <div key={`${letter}-${i}`} className="overflow-hidden">
                 <motion.span
-                  className="block font-serif text-[18vw] leading-none tracking-tighter md:text-[12vw]"
+                  className="block font-hand text-[18vw] font-semibold leading-none tracking-tighter md:text-[12vw]"
                   initial={{ y: reducedMotion ? '0%' : '115%' }}
                   animate={isInView ? { y: '0%' } : undefined}
                   transition={{
@@ -130,7 +133,7 @@ export function RevealingFooter({
                 Latest Episode
               </p>
               <div className="flex gap-5">
-                <img
+                <OptimizedImage
                   src={latest.imageUrl}
                   alt=""
                   className="h-24 w-20 object-cover md:h-28 md:w-24"
@@ -224,14 +227,41 @@ export function RevealingFooter({
             )}
           </nav>
 
-          <div className="text-right">
+          <div className="w-full max-w-sm text-left md:text-right">
+            <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.3em] text-cream/35">
+              Cursor
+            </p>
+            <div className="flex flex-wrap gap-2 md:justify-end">
+              {(
+                [
+                  { id: 'full', label: 'Full' },
+                  { id: 'reduced', label: 'Reduced' },
+                  { id: 'off', label: 'Default' },
+                ] as const
+              ).map((opt) => (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => setMode(opt.id)}
+                  className={cn(
+                    'border px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.18em] transition-colors',
+                    mode === opt.id
+                      ? 'border-cream bg-cream text-bronze'
+                      : 'border-cream/25 text-cream/55 hover:border-cream/50 hover:text-cream',
+                  )}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+
             <ReturnToBeginning />
             <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.35em] text-cream/30">
               {contactEmail && <span className="mr-3">{contactEmail}</span>}
               © {year} {podcastName}
             </p>
             {legalLinks.length > 0 && (
-              <div className="mt-3 flex flex-wrap justify-end gap-4">
+              <div className="mt-3 flex flex-wrap justify-start gap-4 md:justify-end">
                 {legalLinks.map((link) => (
                   <a
                     key={link.href}

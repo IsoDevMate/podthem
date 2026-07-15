@@ -10,7 +10,10 @@ import { EpisodesPage } from '@/pages/EpisodesPage'
 import { AboutPage } from '@/pages/AboutPage'
 import { TeamPage } from '@/pages/TeamPage'
 import { ContactPage } from '@/pages/ContactPage'
-import { ListenPage } from '@/pages/ListenPage'
+import { MerchPage } from '@/pages/MerchPage'
+import { MerchDetailPage } from '@/pages/MerchDetailPage'
+import { EventsPage } from '@/pages/EventsPage'
+import { FAQPage } from '@/pages/FAQPage'
 
 const ROUTES = (
   <>
@@ -20,7 +23,10 @@ const ROUTES = (
     <Route path="/about" element={<AboutPage />} />
     <Route path="/team" element={<TeamPage />} />
     <Route path="/contact" element={<ContactPage />} />
-    <Route path="/listen" element={<ListenPage />} />
+    <Route path="/merch" element={<MerchPage />} />
+    <Route path="/merch/:id" element={<MerchDetailPage />} />
+    <Route path="/events" element={<EventsPage />} />
+    <Route path="/faq" element={<FAQPage />} />
   </>
 )
 
@@ -72,15 +78,13 @@ export function PageMorphTransition() {
 
       document.documentElement.classList.add('morph-transition')
       lenis?.stop()
-
-      if (wasEpisode || isEpisode) {
-        lenis?.scrollTo(0, { immediate: true })
-      }
+      lenis?.scrollTo(0, { immediate: true })
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
 
       gsap.set(incoming, {
-        y: isEpisode ? 72 : 48,
-        scale: 1.04,
-        filter: 'blur(14px)',
+        y: isEpisode ? 36 : 24,
+        scale: 1.02,
+        filter: 'blur(8px)',
         opacity: 0,
       })
 
@@ -99,19 +103,21 @@ export function PageMorphTransition() {
         },
       })
 
+      // Fast curtain lift (~400ms) — retain brown reveal, lose the wait
       if (backdrop) {
         gsap.set(backdrop, { opacity: 1 })
         tl.fromTo(
           backdrop,
-          { backgroundColor: wasEpisode ? '#f6f0e4' : '#ebe3d2' },
+          { backgroundColor: wasEpisode ? '#f6f0e4' : '#ebe3d2', yPercent: 0 },
           {
             backgroundColor: isEpisode ? '#ebe3d2' : '#f6f0e4',
-            duration: 1,
-            ease: 'power2.inOut',
+            yPercent: -100,
+            duration: 0.42,
+            ease: 'power3.inOut',
           },
           0,
         )
-        tl.to(backdrop, { opacity: 0, duration: 0.4, ease: 'power2.out' }, '-=0.2')
+        tl.to(backdrop, { opacity: 0, duration: 0.2, ease: 'power2.out' }, '-=0.12')
       }
 
       if (ghost && origin?.imageUrl) {
@@ -147,24 +153,24 @@ export function PageMorphTransition() {
             left: vw / 2,
             top: vh * 0.42,
             rotate: isEpisode ? 0 : -2,
-            duration: 0.9,
+            duration: 0.45,
             ease: 'power4.inOut',
           },
-          0.05,
+          0.02,
         )
-        tl.to(ghost, { opacity: 0, scale: 1.04, duration: 0.45, ease: 'power2.in' }, '-=0.15')
+        tl.to(ghost, { opacity: 0, scale: 1.02, duration: 0.22, ease: 'power2.in' }, '-=0.08')
       }
 
       if (outgoing) {
         tl.to(
           outgoing,
           {
-            y: -40,
-            scale: 0.96,
-            rotateX: 4,
-            filter: 'blur(12px)',
+            y: -20,
+            scale: 0.98,
+            rotateX: 2,
+            filter: 'blur(6px)',
             opacity: 0,
-            duration: 0.65,
+            duration: 0.32,
             transformPerspective: 1200,
             transformOrigin: '50% 20%',
           },
@@ -175,9 +181,9 @@ export function PageMorphTransition() {
       tl.fromTo(
         incoming,
         {
-          y: isEpisode ? 72 : 48,
-          scale: 1.04,
-          filter: 'blur(14px)',
+          y: isEpisode ? 36 : 24,
+          scale: 1.02,
+          filter: 'blur(8px)',
           opacity: 0,
         },
         {
@@ -185,26 +191,26 @@ export function PageMorphTransition() {
           scale: 1,
           filter: 'blur(0px)',
           opacity: 1,
-          duration: 0.95,
+          duration: 0.45,
           ease: 'power4.out',
         },
-        outgoing ? '-=0.35' : 0,
+        outgoing ? '-=0.18' : 0,
       )
 
       const headings = incoming.querySelectorAll('h1, h2')
       if (headings.length) {
         tl.fromTo(
           headings,
-          { y: 28, filter: 'blur(8px)', opacity: 0.4 },
+          { y: 16, filter: 'blur(4px)', opacity: 0.5 },
           {
             y: 0,
             filter: 'blur(0px)',
             opacity: 1,
-            duration: 0.8,
-            stagger: 0.06,
+            duration: 0.38,
+            stagger: 0.04,
             ease: 'power3.out',
           },
-          '-=0.7',
+          '-=0.32',
         )
       }
     })

@@ -16,9 +16,9 @@ export const DEMO_AUDIO =
 export const defaultNavLinks: NavLink[] = [
   { label: 'Home', href: '/' },
   { label: 'Episodes', href: '/episodes' },
-  { label: 'Upcoming', href: '#upcoming' },
-  { label: 'Topics', href: '#topics' },
-  { label: 'Listen', href: '/listen' },
+  { label: 'Events', href: '/events' },
+  { label: 'Merch', href: '/merch' },
+  { label: 'About', href: '/about' },
 ]
 
 export const defaultHero: HeroProps = {
@@ -277,21 +277,25 @@ export const categories = [
   {
     id: 'craft',
     label: 'Craft',
+    blurb: 'How stories get built — editing, structure, and the patience behind the cut.',
     preview: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=600&q=80',
   },
   {
     id: 'culture',
     label: 'Culture',
+    blurb: 'Cities, rituals, and the textures of everyday life recorded in the field.',
     preview: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?w=600&q=80',
   },
   {
     id: 'sound',
     label: 'Sound Design',
+    blurb: 'Mic technique, mastering, and the architecture of silence.',
     preview: 'https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=600&q=80',
   },
   {
     id: 'letters',
     label: 'Letters',
+    blurb: 'Listener correspondence — voicemails, notes, and the feedback loop.',
     preview: 'https://images.unsplash.com/photo-1589903308904-0e09654a379d?w=600&q=80',
   },
 ]

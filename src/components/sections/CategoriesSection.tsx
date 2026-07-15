@@ -12,6 +12,7 @@ export interface CategoryItem {
   id: string
   label: string
   preview: string
+  blurb?: string
 }
 
 export interface CategoriesSectionProps {
@@ -58,7 +59,7 @@ export function CategoriesSection({
           {label}
         </span>
         <p className="max-w-sm text-sm text-bronze-muted">
-          Hover a topic to preview. Click to open that slice of the episode archive.
+          Each topic filters the archive — so you land on episodes that match what you came for.
         </p>
       </div>
 
@@ -102,6 +103,16 @@ export function CategoriesSection({
               >
                 {cat.label}
               </span>
+              {cat.blurb && (
+                <span
+                  className={cn(
+                    'mt-2 block max-w-md text-sm text-bronze-muted transition-opacity duration-300',
+                    active === cat.id ? 'opacity-100' : 'opacity-0 md:opacity-60',
+                  )}
+                >
+                  {cat.blurb}
+                </span>
+              )}
               <span
                 className={cn(
                   'mt-2 block h-px origin-center scale-x-0 bg-bronze transition-transform duration-500',

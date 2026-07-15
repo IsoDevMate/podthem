@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { UpcomingEpisode } from '@/types/episode'
+import { cn } from '@/lib/utils'
 
 interface UpcomingEpisodeStripProps {
   upcoming: UpcomingEpisode
@@ -36,7 +37,22 @@ function useCountdown(iso: string) {
   return parts
 }
 
-/** Editorial strip — matches existing cream/bronze language */
+function FlipDigit({ value, urgent }: { value: string; urgent?: boolean }) {
+  return (
+    <span
+      className={cn(
+        'relative inline-flex min-w-[1.35em] items-center justify-center overflow-hidden rounded-sm border border-bronze/15 bg-[#ebe3d2] px-1.5 py-1 font-mono text-2xl tabular-nums text-bronze shadow-[inset_0_1px_0_rgba(255,255,255,0.35)] md:min-w-[1.5em] md:px-2 md:text-4xl',
+        urgent && 'countdown-pulse border-amber-800/35 text-amber-950',
+      )}
+    >
+      <span key={value} className="block animate-[digit-roll_0.35s_ease-out]">
+        {value}
+      </span>
+    </span>
+  )
+}
+
+/** Editorial strip with urgent flip-style countdown */
 export function UpcomingEpisodeStrip({ upcoming }: UpcomingEpisodeStripProps) {
   const { d, h, m, s, done } = useCountdown(upcoming.startsAt)
   const when = new Date(upcoming.startsAt)
@@ -50,6 +66,12 @@ export function UpcomingEpisodeStrip({ upcoming }: UpcomingEpisodeStripProps) {
     minute: '2-digit',
   })
 
+  const totalMs = Math.max(1, new Date(upcoming.startsAt).getTime() - Date.now())
+  // Progress relative to a 7-day window for visual urgency
+  const weekMs = 7 * 86_400_000
+  const remaining = Math.min(1, Math.max(0, totalMs / weekMs))
+  const drained = done ? 1 : 1 - remaining
+
   return (
     <section
       id="upcoming"
@@ -57,9 +79,15 @@ export function UpcomingEpisodeStrip({ upcoming }: UpcomingEpisodeStripProps) {
     >
       <div className="mx-auto flex max-w-7xl flex-col gap-10 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
-            Who's next
-          </span>
+          <div className="flex items-center gap-3">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-700/50 opacity-75" />
+              <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-amber-800" />
+            </span>
+            <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
+              Who&apos;s next · Live soon
+            </span>
+          </div>
           <h2 className="mt-3 font-hand text-3xl font-semibold tracking-tight text-bronze md:text-4xl">
             Upcoming episode
           </h2>
@@ -92,29 +120,41 @@ export function UpcomingEpisodeStrip({ upcoming }: UpcomingEpisodeStripProps) {
           </div>
         </div>
 
-        <div className="flex flex-col items-start gap-4 lg:items-end">
+        <div className="flex w-full max-w-md flex-col items-start gap-4 lg:items-end">
           <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-bronze-muted">
             {done ? 'Recording window open' : 'Countdown'}
           </p>
-          {/* Single row — digits never wrap */}
           <div
-            className="flex items-baseline gap-1 font-mono tracking-[0.08em] text-bronze"
+            className="flex items-center gap-1.5"
             aria-live="polite"
             aria-label={`${pad(d)} days, ${pad(h)} hours, ${pad(m)} minutes, ${pad(s)} seconds`}
           >
             {[
-              { v: pad(d), u: 'd' },
-              { v: pad(h), u: 'h' },
-              { v: pad(m), u: 'm' },
-              { v: pad(s), u: 's' },
-            ].map(({ v, u }, i) => (
-              <span key={u} className="flex items-baseline gap-0.5">
-                {i > 0 && <span className="mx-0.5 text-xl text-bronze/40 md:text-2xl">:</span>}
-                <span className="tabular-nums text-2xl md:text-4xl">{v}</span>
-                <span className="text-[9px] uppercase tracking-widest text-bronze-muted md:text-[10px]">{u}</span>
+              { v: pad(d), u: 'd', urgent: false },
+              { v: pad(h), u: 'h', urgent: false },
+              { v: pad(m), u: 'm', urgent: false },
+              { v: pad(s), u: 's', urgent: true },
+            ].map(({ v, u, urgent }, i) => (
+              <span key={u} className="flex flex-col items-center gap-1">
+                <span className="flex items-center gap-1">
+                  {i > 0 && (
+                    <span className="mx-0.5 font-mono text-xl text-bronze/35 md:text-2xl">:</span>
+                  )}
+                  <FlipDigit value={v} urgent={!done && urgent} />
+                </span>
+                <span className="text-[9px] uppercase tracking-widest text-bronze-muted">{u}</span>
               </span>
             ))}
           </div>
+
+          {/* Draining urgency bar */}
+          <div className="h-1 w-full overflow-hidden rounded-full bg-bronze/10">
+            <div
+              className="h-full origin-left bg-gradient-to-r from-amber-800 to-bronze transition-[transform] duration-1000 ease-linear"
+              style={{ transform: `scaleX(${done ? 1 : drained})` }}
+            />
+          </div>
+
           <a
             href={upcoming.notifyHref ?? '#community'}
             className="inline-flex h-11 items-center border border-bronze/25 px-6 text-xs uppercase tracking-[0.22em] text-bronze transition-colors hover:bg-bronze hover:text-cream"

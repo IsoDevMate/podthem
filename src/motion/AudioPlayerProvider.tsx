@@ -9,7 +9,6 @@ import {
   type ReactNode,
 } from 'react'
 import type { Episode } from '@/types/episode'
-import { episodes } from '@/data/episodes'
 
 interface AudioContextValue {
   current: Episode | null
@@ -21,6 +20,7 @@ interface AudioContextValue {
   seek: (ratio: number) => void
   setVolume: (v: number) => void
   volume: number
+  stop: () => void
 }
 
 const AudioCtx = createContext<AudioContextValue | null>(null)
@@ -33,7 +33,7 @@ export function useAudioPlayer() {
 
 export function AudioPlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [current, setCurrent] = useState<Episode | null>(episodes[0] ?? null)
+  const [current, setCurrent] = useState<Episode | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [progress, setProgress] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -111,6 +111,18 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
     if (audioRef.current) audioRef.current.volume = clamped
   }, [])
 
+  const stop = useCallback(() => {
+    const audio = audioRef.current
+    if (audio) {
+      audio.pause()
+      audio.currentTime = 0
+    }
+    setIsPlaying(false)
+    setCurrent(null)
+    setProgress(0)
+    setDuration(0)
+  }, [])
+
   const value = useMemo(
     () => ({
       current,
@@ -122,6 +134,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       seek,
       setVolume,
       volume,
+      stop,
     }),
     [
       current,
@@ -133,6 +146,7 @@ export function AudioPlayerProvider({ children }: { children: ReactNode }) {
       seek,
       setVolume,
       volume,
+      stop,
     ],
   )
 

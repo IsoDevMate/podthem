@@ -11,8 +11,10 @@ export function SiteFooter() {
       navLinks={[
         { label: 'About', href: '/about' },
         { label: 'Episodes', href: '/episodes' },
-        { label: 'Listen', href: '/listen' },
+        { label: 'Events', href: '/events' },
+        { label: 'Merch', href: '/merch' },
         { label: 'Team', href: '/team' },
+        { label: 'FAQ', href: '/faq' },
         { label: 'Contact', href: '/contact' },
         { label: 'Manifesto', href: '/#manifesto' },
       ]}

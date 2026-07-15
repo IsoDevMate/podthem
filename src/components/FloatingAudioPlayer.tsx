@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
-import { Pause, Play, Volume2 } from 'lucide-react'
+import { Pause, Play, Volume2, X } from 'lucide-react'
 import { useAudioPlayer } from '@/motion/AudioPlayerProvider'
+import { OptimizedImage } from '@/components/shared/OptimizedImage'
 import { cn } from '@/lib/utils'
 
 function formatTime(seconds: number) {
@@ -10,6 +11,7 @@ function formatTime(seconds: number) {
   return `${m}:${String(s).padStart(2, '0')}`
 }
 
+/** Bottom mini-player — thumb-reachable, Spotify-style dock */
 export function FloatingAudioPlayer() {
   const {
     current,
@@ -20,6 +22,7 @@ export function FloatingAudioPlayer() {
     seek,
     volume,
     setVolume,
+    stop,
   } = useAudioPlayer()
 
   if (!current) return null
@@ -29,116 +32,87 @@ export function FloatingAudioPlayer() {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 80, opacity: 0 }}
+        initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
+        exit={{ y: 100, opacity: 0 }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         className={cn(
-          'fixed right-4 bottom-4 left-4 z-[60] md:right-8 md:bottom-6 md:left-auto md:w-[420px]',
-          'rounded-2xl border border-cream/20 bg-bronze/70 text-cream shadow-2xl backdrop-blur-xl',
+          'fixed inset-x-0 bottom-0 z-[60]',
+          'border-t border-cream/15 bg-bronze/90 text-cream shadow-[0_-12px_40px_rgba(26,21,16,0.35)] backdrop-blur-xl',
+          'pb-[max(0.5rem,env(safe-area-inset-bottom))]',
         )}
       >
-        <div className="flex items-center gap-3 p-3 md:p-4">
-          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-bronze/40">
-            <motion.img
+        {/* Seek strip */}
+        <button
+          type="button"
+          className="block h-1 w-full overflow-hidden bg-cream/15"
+          aria-label="Seek"
+          onClick={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect()
+            seek((e.clientX - rect.left) / rect.width)
+          }}
+        >
+          <motion.div
+            className="h-full origin-left bg-cream"
+            style={{ scaleX: ratio }}
+          />
+        </button>
+
+        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 md:gap-4 md:px-8">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden bg-bronze/40 md:h-14 md:w-14">
+            <OptimizedImage
               src={current.imageUrl}
               alt=""
               className="h-full w-full object-cover"
-              animate={{ rotate: isPlaying ? 360 : 0 }}
-              transition={{
-                duration: 12,
-                ease: 'linear',
-                repeat: isPlaying ? Infinity : 0,
-              }}
-              onError={(e) => {
-                const img = e.currentTarget
-                img.style.display = 'none'
-              }}
             />
           </div>
 
           <div className="min-w-0 flex-1">
-            <p className="truncate font-serif text-sm md:text-base">
+            <p className="truncate font-hand text-lg font-semibold leading-tight md:text-xl">
               {current.title}
             </p>
             <p className="font-mono text-[10px] tracking-widest text-cream/50">
-              EP {String(current.episodeNumber).padStart(2, '0')}
+              EP {String(current.episodeNumber).padStart(2, '0')} · {formatTime(progress)} /{' '}
+              {formatTime(duration)}
             </p>
-
-            {/* Waveform bars */}
-            <div className="mt-2 flex h-3 items-end gap-[2px]" aria-hidden>
-              {Array.from({ length: 24 }).map((_, i) => (
-                <motion.span
-                  key={i}
-                  className="w-[3px] rounded-sm bg-cream/50"
-                  animate={
-                    isPlaying
-                      ? {
-                          height: [
-                            4 + (i % 5),
-                            10 + ((i * 3) % 8),
-                            4 + (i % 4),
-                          ],
-                        }
-                      : { height: 4 + (i % 3) }
-                  }
-                  transition={{
-                    duration: 0.6 + (i % 5) * 0.1,
-                    repeat: isPlaying ? Infinity : 0,
-                    ease: 'easeInOut',
-                  }}
-                />
-              ))}
-            </div>
-
-            {/* Progress */}
-            <button
-              type="button"
-              className="mt-2 block h-1 w-full overflow-hidden rounded-full bg-cream/20"
-              aria-label="Seek"
-              onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                seek((e.clientX - rect.left) / rect.width)
-              }}
-            >
-              <motion.div
-                className="h-full origin-left bg-cream"
-                style={{ scaleX: ratio }}
-              />
-            </button>
-            <div className="mt-1 flex justify-between font-mono text-[9px] text-cream/40">
-              <span>{formatTime(progress)}</span>
-              <span>{formatTime(duration)}</span>
-            </div>
           </div>
 
-          <div className="flex flex-col items-center gap-2">
-            <motion.button
-              type="button"
-              onClick={toggle}
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.92 }}
-              className="flex h-11 w-11 items-center justify-center rounded-full bg-cream text-bronze"
-              aria-label={isPlaying ? 'Pause' : 'Play'}
-            >
-              {isPlaying ? (
-                <Pause size={16} fill="currentColor" />
-              ) : (
-                <Play size={16} fill="currentColor" className="ml-0.5" />
-              )}
-            </motion.button>
-            <div className="hidden items-center gap-1 md:flex">
-              <Volume2 size={12} className="text-cream/50" />
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.01}
-                value={volume}
-                onChange={(e) => setVolume(Number(e.target.value))}
-                className="w-14 accent-cream"
-                aria-label="Volume"
-              />
-            </div>
+          <div className="hidden items-center gap-2 md:flex">
+            <Volume2 size={14} className="text-cream/50" />
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.01}
+              value={volume}
+              onChange={(e) => setVolume(Number(e.target.value))}
+              className="w-20 accent-cream"
+              aria-label="Volume"
+            />
           </div>
+
+          <motion.button
+            type="button"
+            onClick={toggle}
+            whileTap={{ scale: 0.92 }}
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-cream text-bronze"
+            aria-label={isPlaying ? 'Pause' : 'Play'}
+          >
+            {isPlaying ? (
+              <Pause size={18} fill="currentColor" />
+            ) : (
+              <Play size={18} fill="currentColor" className="ml-0.5" />
+            )}
+          </motion.button>
+
+          <button
+            type="button"
+            onClick={stop}
+            className="flex h-10 w-10 items-center justify-center text-cream/45 transition-colors hover:text-cream"
+            aria-label="Close player"
+          >
+            <X size={18} />
+          </button>
         </div>
       </motion.div>
     </AnimatePresence>

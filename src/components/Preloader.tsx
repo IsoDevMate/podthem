@@ -8,6 +8,7 @@ interface PreloaderProps {
   onComplete?: () => void
 }
 
+/** First-load curtain only — intentionally shorter so the site lands fast. */
 export function Preloader({ onComplete }: PreloaderProps) {
   const [done, setDone] = useState(false)
   const reduced = useReducedMotion()
@@ -29,45 +30,44 @@ export function Preloader({ onComplete }: PreloaderProps) {
           document.body.style.overflow = ''
           onComplete?.()
           window.dispatchEvent(new Event('podthem:preloader-complete'))
-          // Gentle fade-in — avoid transform on <main> (breaks ScrollTrigger pins)
           gsap.fromTo(
             'main',
             { opacity: 0 },
-            { opacity: 1, duration: 0.9, ease: 'power2.out' },
+            { opacity: 1, duration: 0.45, ease: 'power2.out' },
           )
-        }, 120)
+        }, 40)
       },
     })
 
     tl.fromTo(
       '[data-preload-grain]',
       { opacity: 0 },
-      { opacity: 0.4, duration: 1.2, ease: 'power2.out' },
+      { opacity: 0.35, duration: 0.45, ease: 'power2.out' },
       0,
     )
 
     tl.fromTo(
       '[data-preload-stroke]',
       { strokeDashoffset: 1 },
-      { strokeDashoffset: 0, duration: 1.6, ease: 'power2.inOut' },
-      0.15,
+      { strokeDashoffset: 0, duration: 0.7, ease: 'power2.inOut' },
+      0.05,
     )
 
     tl.fromTo(
       '[data-preload-word]',
-      { opacity: 0, letterSpacing: '0.4em', y: 12 },
-      { opacity: 1, letterSpacing: '0.12em', y: 0, duration: 1, ease: 'power3.out' },
-      0.6,
+      { opacity: 0, letterSpacing: '0.35em', y: 10 },
+      { opacity: 1, letterSpacing: '0.12em', y: 0, duration: 0.45, ease: 'power3.out' },
+      0.25,
     )
 
     tl.to(
       '[data-preload-panel]',
       {
         clipPath: 'inset(0% 0% 100% 0%)',
-        duration: 1.2,
+        duration: 0.5,
         ease: 'power4.inOut',
       },
-      '+=0.35',
+      '+=0.15',
     )
 
     return () => {
@@ -82,7 +82,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
         <motion.div
           className="fixed inset-0 z-[10000]"
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.25 }}
         >
           <div
             data-preload-panel

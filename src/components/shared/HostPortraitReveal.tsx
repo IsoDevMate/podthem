@@ -37,7 +37,7 @@ export function HostPortraitReveal({
   const [open, setOpen] = useState(reduced)
   const [hasRevealed, setHasRevealed] = useState(reduced)
   const wrapRef = useRef<HTMLDivElement>(null)
-  const inView = useInView(wrapRef, { amount: 0.45, once: true })
+  const inView = useInView(wrapRef, { amount: 0.25, once: true, margin: '0px 0px -10% 0px' })
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const sx = useSpring(mx, SPRING.soft)
@@ -108,7 +108,7 @@ export function HostPortraitReveal({
           animate={
             reduced || open
               ? { clipPath: 'inset(0% 0% 0% 0%)', scale: 1.03 }
-              : { clipPath: 'inset(0% 100% 0% 0%)', scale: 1.01 }
+              : { clipPath: 'inset(8% 8% 8% 8%)', scale: 1.01 }
           }
           transition={{ duration: reduced ? 0 : 0.65, ease: [0.16, 1, 0.3, 1] }}
         >

@@ -108,8 +108,8 @@ export function Hero({
   const ctaDelay = reducedMotion ? 0.2 : subDelay + 0.55
 
   return (
-    <section ref={containerRef} className="relative h-[145vh]">
-      <div className="sticky top-0 h-screen overflow-hidden">
+    <section ref={containerRef} className="relative h-[115vh] md:h-[145vh]">
+      <div className="sticky top-0 h-[100svh] overflow-hidden md:h-screen">
         <motion.div
           className="absolute inset-0"
           style={{
@@ -150,14 +150,14 @@ export function Hero({
         <div className="pointer-events-none absolute inset-0 z-[3] film-grain opacity-[0.4]" />
 
         <motion.div
-          className="relative z-10 flex h-full flex-col justify-end px-6 pb-16 pt-28 md:px-12 lg:px-20"
+          className="relative z-10 flex h-full flex-col justify-end px-6 pb-12 pt-24 md:px-12 md:pb-16 md:pt-28 lg:px-20"
           style={{ opacity: textOpacity, y: textY }}
         >
           <div className="grid gap-8 md:grid-cols-2 md:items-end">
             <AnimatedText
               as="h1"
               lines={headline}
-              className="font-hand text-5xl font-semibold leading-[0.95] tracking-tight text-cream md:text-7xl lg:text-8xl"
+              className="font-hand text-4xl font-semibold leading-[0.95] tracking-tight text-cream sm:text-5xl md:text-7xl lg:text-8xl"
               stagger={0.12}
               duration={0.85}
             />

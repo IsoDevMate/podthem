@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { useCursorPrefs } from '@/motion/CursorPrefs'
 import { SPRING } from '@/motion/easings'
 
 function labelFor(kind: string | undefined, custom?: string) {
@@ -11,20 +12,26 @@ function labelFor(kind: string | undefined, custom?: string) {
 }
 
 export function CustomCursor() {
-  const reduced = useReducedMotion()
+  const systemReduced = useReducedMotion()
+  const { enabled, reducedEffects } = useCursorPrefs()
   const [label, setLabel] = useState('')
   const [expanded, setExpanded] = useState(false)
 
+  const spring = reducedEffects ? SPRING.soft : SPRING.magnetic
   const visible = useMotionValue(0)
   const x = useMotionValue(-100)
   const y = useMotionValue(-100)
-  const sx = useSpring(x, SPRING.magnetic)
-  const sy = useSpring(y, SPRING.magnetic)
+  const sx = useSpring(x, spring)
+  const sy = useSpring(y, spring)
   const scaleX = useSpring(1, SPRING.soft)
   const scaleY = useSpring(1, SPRING.soft)
 
   useEffect(() => {
-    if (reduced) return
+    if (!enabled || systemReduced) {
+      document.documentElement.classList.remove('has-custom-cursor')
+      return
+    }
+
     document.documentElement.classList.add('has-custom-cursor')
 
     let lastX = 0
@@ -43,7 +50,7 @@ export function CustomCursor() {
       y.set(e.clientY)
       visible.set(1)
 
-      const stretch = Math.min(speed * 0.1, 0.6)
+      const stretch = reducedEffects ? 0 : Math.min(speed * 0.1, 0.6)
       scaleX.set(1 + stretch)
       scaleY.set(1 - stretch * 0.35)
 
@@ -69,13 +76,14 @@ export function CustomCursor() {
       window.removeEventListener('mousemove', onMove)
       document.removeEventListener('mouseleave', onLeave)
     }
-  }, [reduced, x, y, scaleX, scaleY, visible])
+  }, [enabled, systemReduced, reducedEffects, x, y, scaleX, scaleY, visible])
 
-  if (reduced) return null
+  if (!enabled || systemReduced) return null
 
   return (
     <motion.div
       aria-hidden
+      data-cursor-root
       className="pointer-events-none fixed top-0 left-0 z-[9999] mix-blend-difference"
       style={{
         x: sx,

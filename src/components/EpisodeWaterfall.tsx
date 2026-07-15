@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -175,25 +175,10 @@ export function EpisodeWaterfall({
     }
   }, [pinReady, reduced, refreshScroll])
 
-  // ── Mobile: plain staggered card list ────────────────────────────────────
+  // ── Mobile: swipeable stacked cards with 3D depth ─────────────────────────
   if (mobile || reduced) {
     return (
-      <section
-        id="episodes"
-        className="relative bg-gradient-to-b from-[#f6f0e4] via-[#f6f0e4] to-[#ebe3d2] px-6 py-16"
-      >
-        <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
-          {label}
-        </span>
-        <h2 className="mt-2 mb-10 font-hand text-4xl font-semibold tracking-tight text-bronze">
-          {headline}
-        </h2>
-        <div className="space-y-8">
-          {episodes.map((episode, i) => (
-            <MobileEpisodeCard key={episode.id} episode={episode} index={i} />
-          ))}
-        </div>
-      </section>
+      <MobileEpisodeStack label={label} headline={headline} />
     )
   }
 
@@ -278,53 +263,121 @@ export function EpisodeWaterfall({
   )
 }
 
-function MobileEpisodeCard({ episode, index }: { episode: Episode; index: number }) {
+function MobileEpisodeStack({
+  label,
+  headline,
+}: {
+  label: string
+  headline: string
+}) {
+  const [index, setIndex] = useState(0)
+  const startX = useRef(0)
   const { playEpisode } = useAudioPlayer()
+  const ep = episodes[index]
+
+  const onPointerDown = (e: ReactPointerEvent) => {
+    startX.current = e.clientX
+  }
+
+  const onPointerUp = (e: ReactPointerEvent) => {
+    const dx = e.clientX - startX.current
+    if (Math.abs(dx) < 40) return
+    if (dx < 0) setIndex((i) => Math.min(episodes.length - 1, i + 1))
+    else setIndex((i) => Math.max(0, i - 1))
+  }
+
   return (
-    <div
-      className="flex gap-4"
-      style={{ animationDelay: `${index * 80}ms` }}
+    <section
+      id="episodes"
+      className="relative overflow-x-clip bg-gradient-to-b from-[#f6f0e4] via-[#f6f0e4] to-[#ebe3d2] px-6 py-16"
     >
-      <Link
-        to={`/episode/${episode.id}`}
-        onClick={(e) => onMorphNavigate(e, 'card', episode.imageUrl)}
-        className="relative aspect-[3/4] w-28 shrink-0 overflow-hidden bg-cream-dark"
+      <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
+        {label}
+      </span>
+      <h2 className="mt-2 mb-2 font-hand text-4xl font-semibold tracking-tight text-bronze">
+        {headline}
+      </h2>
+      <p className="mb-8 font-mono text-[10px] uppercase tracking-[0.2em] text-bronze-muted">
+        Swipe · {index + 1} / {episodes.length}
+      </p>
+
+      <div
+        className="relative mx-auto h-[58vw] max-h-[380px] min-h-[260px] w-full max-w-sm touch-pan-y"
+        style={{ perspective: '1200px' }}
+        onPointerDown={onPointerDown}
+        onPointerUp={onPointerUp}
       >
-        <img
-          src={episode.imageUrl}
-          alt={episode.title}
-          className="h-full w-full object-cover"
-          loading="lazy"
-        />
-        <span className="absolute bottom-2 left-2 font-mono text-[9px] tracking-widest text-cream">
-          EP {String(episode.episodeNumber).padStart(2, '0')}
-        </span>
-      </Link>
-      <div className="flex flex-col justify-center">
-        <h3 className="font-hand text-xl font-semibold leading-tight text-bronze">
-          {episode.title}
-        </h3>
-        <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-bronze-muted">
-          {episode.description}
-        </p>
-        <div className="mt-3 flex gap-4">
-          <button
-            type="button"
-            onClick={() => playEpisode(episode)}
-            className="text-[10px] uppercase tracking-[0.2em] text-bronze"
-          >
-            Play →
-          </button>
-          <Link
-            to={`/episode/${episode.id}`}
-            onClick={(e) => onMorphNavigate(e, 'card', episode.imageUrl)}
-            className="text-[10px] uppercase tracking-[0.2em] text-bronze-muted"
-          >
-            Details
-          </Link>
-        </div>
+        {episodes.map((episode, i) => {
+          const offset = i - index
+          const abs = Math.abs(offset)
+          if (abs > 2) return null
+          return (
+            <div
+              key={episode.id}
+              className="absolute inset-x-4 top-0 bottom-0 transition-transform duration-500 ease-out"
+              style={{
+                zIndex: 10 - abs,
+                transform: `translateX(${offset * 14}px) translateY(${abs * 10}px) scale(${1 - abs * 0.06}) rotate(${offset * -3}deg)`,
+                opacity: abs > 1.5 ? 0.35 : 1,
+              }}
+            >
+              <Link
+                to={`/episode/${episode.id}`}
+                onClick={(e) => onMorphNavigate(e, 'card', episode.imageUrl)}
+                className="block h-full overflow-hidden bg-cream-dark shadow-xl shadow-bronze/20"
+              >
+                <img
+                  src={episode.imageUrl}
+                  alt={episode.title}
+                  className="h-full w-full object-cover"
+                  draggable={false}
+                />
+                <span className="absolute bottom-3 left-3 font-mono text-[10px] tracking-widest text-cream">
+                  EP {String(episode.episodeNumber).padStart(2, '0')}
+                </span>
+              </Link>
+            </div>
+          )
+        })}
       </div>
-    </div>
+
+      {ep && (
+        <div className="mx-auto mt-8 max-w-sm">
+          <h3 className="font-hand text-2xl font-semibold text-bronze">{ep.title}</h3>
+          <p className="mt-2 line-clamp-3 text-sm text-bronze-muted">{ep.description}</p>
+          <div className="mt-4 flex gap-5">
+            <button
+              type="button"
+              onClick={() => playEpisode(ep)}
+              className="text-[10px] uppercase tracking-[0.2em] text-bronze"
+            >
+              Play →
+            </button>
+            <Link
+              to={`/episode/${ep.id}`}
+              onClick={(e) => onMorphNavigate(e, 'card', ep.imageUrl)}
+              className="text-[10px] uppercase tracking-[0.2em] text-bronze-muted"
+            >
+              Details
+            </Link>
+          </div>
+          <div className="mt-6 flex justify-center gap-2">
+            {episodes.map((e, i) => (
+              <button
+                key={e.id}
+                type="button"
+                aria-label={`Episode ${i + 1}`}
+                onClick={() => setIndex(i)}
+                className={cn(
+                  'h-1.5 w-1.5 rounded-full transition-colors',
+                  i === index ? 'bg-bronze' : 'bg-bronze/25',
+                )}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   )
 }
 

@@ -94,9 +94,28 @@
   }
 }
 
+@keyframes digit-roll {
+  from {
+    transform: translateY(40%);
+    opacity: 0.35;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-eq,
   .countdown-pulse {
     animation: none !important;
+  }
+
+  @keyframes digit-roll {
+    from,
+    to {
+      transform: none;
+      opacity: 1;
+    }
   }
 }

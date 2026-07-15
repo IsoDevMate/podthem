@@ -6,6 +6,7 @@ import { ImageLayoutSync } from '@/motion/ImageLayoutSync'
 import { PageMorphTransition } from '@/motion/PageMorphTransition'
 import { AudioPlayerProvider } from '@/motion/AudioPlayerProvider'
 import { SoundProvider, SoundToggle } from '@/motion/SoundDesign'
+import { CursorPrefsProvider } from '@/motion/CursorPrefs'
 import { ScrollToTop } from '@/motion/ScrollToTop'
 import { CustomCursor } from '@/components/CustomCursor'
 import { Preloader } from '@/components/Preloader'
@@ -19,21 +20,23 @@ export default function App() {
     <BrowserRouter>
       <SmoothScrollProvider>
         <AppReadyProvider>
-          <SoundProvider>
-            <AudioPlayerProvider>
-              <ScrollToTop />
-              <Preloader />
-              <ScrollLayoutSync />
-              <ImageLayoutSync />
-              <ScrollProgress />
-              <CustomCursor />
-              <SiteNav />
-              <PageMorphTransition />
-              <SiteFooter />
-              <FloatingAudioPlayer />
-              <SoundToggle />
-            </AudioPlayerProvider>
-          </SoundProvider>
+          <CursorPrefsProvider>
+            <SoundProvider>
+              <AudioPlayerProvider>
+                <ScrollToTop />
+                <Preloader />
+                <ScrollLayoutSync />
+                <ImageLayoutSync />
+                <ScrollProgress />
+                <CustomCursor />
+                <SiteNav />
+                <PageMorphTransition />
+                <SiteFooter />
+                <FloatingAudioPlayer />
+                <SoundToggle />
+              </AudioPlayerProvider>
+            </SoundProvider>
+          </CursorPrefsProvider>
         </AppReadyProvider>
       </SmoothScrollProvider>
     </BrowserRouter>
