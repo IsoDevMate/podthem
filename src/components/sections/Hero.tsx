@@ -111,7 +111,7 @@ export function Hero({
     <section ref={containerRef} className="relative h-[145vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <motion.div
-          className="absolute inset-[-6%]"
+          className="absolute inset-0"
           style={{
             scale: videoScale,
             x: parallaxX,

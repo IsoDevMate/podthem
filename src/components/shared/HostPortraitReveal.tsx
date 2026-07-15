@@ -1,10 +1,11 @@
-import { useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from 'react'
 import { Link } from 'react-router-dom'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { SPRING } from '@/motion/easings'
 import { cn } from '@/lib/utils'
 import { onMorphNavigate } from '@/motion/morphNavigation'
+import { OptimizedImage } from '@/components/shared/OptimizedImage'
 
 export interface HostPortraitRevealProps {
   name: string
@@ -14,11 +15,13 @@ export interface HostPortraitRevealProps {
   profileHref?: string
   episodesHref?: string
   className?: string
+  /** Auto-reveal once when scrolled into view (mobile-friendly) */
+  revealOnView?: boolean
 }
 
 /**
- * Editorial portrait reveal — clip from the side + calm parallax.
- * Hover / focus / tap. Respects reduced motion.
+ * Editorial portrait reveal with organic clip mask.
+ * Desktop: hover. Mobile / revealOnView: IntersectionObserver once.
  */
 export function HostPortraitReveal({
   name,
@@ -28,16 +31,27 @@ export function HostPortraitReveal({
   profileHref = '/about',
   episodesHref = '/episodes',
   className,
+  revealOnView = true,
 }: HostPortraitRevealProps) {
   const reduced = useReducedMotion()
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(reduced)
+  const [hasRevealed, setHasRevealed] = useState(reduced)
   const wrapRef = useRef<HTMLDivElement>(null)
+  const inView = useInView(wrapRef, { amount: 0.45, once: true })
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const sx = useSpring(mx, SPRING.soft)
   const sy = useSpring(my, SPRING.soft)
-  const imgX = useTransform(sx, [-0.5, 0.5], [-12, 12])
-  const imgY = useTransform(sy, [-0.5, 0.5], [-8, 8])
+  const imgX = useTransform(sx, [-0.5, 0.5], [-10, 10])
+  const imgY = useTransform(sy, [-0.5, 0.5], [-6, 6])
+
+  useEffect(() => {
+    if (!revealOnView || hasRevealed || reduced) return
+    if (inView) {
+      setOpen(true)
+      setHasRevealed(true)
+    }
+  }, [inView, revealOnView, hasRevealed, reduced])
 
   const onMove = (e: ReactPointerEvent) => {
     if (reduced || !wrapRef.current) return
@@ -46,61 +60,72 @@ export function HostPortraitReveal({
     my.set((e.clientY - r.top) / r.height - 0.5)
   }
 
-  const onLeave = () => {
-    mx.set(0)
-    my.set(0)
-    // desktop hover close; leave open for touch until toggle
-    if (window.matchMedia('(hover: hover)').matches) setOpen(false)
-  }
+  const finePointer =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches
 
   return (
     <div
       ref={wrapRef}
       className={cn(
-        'group relative aspect-[3/4] w-full max-w-xl overflow-hidden bg-bronze/30 outline-none',
-        'ring-0 transition-[box-shadow] duration-500 focus-visible:ring-2 focus-visible:ring-cream/40',
-        open && 'ring-1 ring-cream/25',
+        'group relative aspect-[3/4] w-full max-w-xl outline-none',
+        'transition-[box-shadow] duration-500 focus-visible:ring-2 focus-visible:ring-cream/40',
+        open && 'ring-1 ring-cream/20',
         className,
       )}
       tabIndex={0}
       role="button"
       aria-expanded={open}
-      aria-label={`${name}, ${role}. Activate to reveal profile.`}
+      aria-label={`${name}, ${role}`}
       onMouseEnter={() => {
-        if (window.matchMedia('(hover: hover)').matches) setOpen(true)
+        if (finePointer) setOpen(true)
       }}
-      onMouseLeave={onLeave}
+      onMouseLeave={() => {
+        mx.set(0)
+        my.set(0)
+        if (finePointer && !hasRevealed) setOpen(false)
+      }}
       onFocus={() => setOpen(true)}
       onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false)
+        if (!e.currentTarget.contains(e.relatedTarget as Node) && finePointer && !hasRevealed) {
+          setOpen(false)
+        }
       }}
       onClick={() => {
-        if (!window.matchMedia('(hover: hover)').matches) setOpen((v) => !v)
+        if (!finePointer) setOpen((v) => !v)
       }}
       onPointerMove={onMove}
+      style={{
+        // Organic editorial frame — not circle/square
+        clipPath:
+          'polygon(4% 2%, 96% 0%, 100% 8%, 98% 78%, 92% 100%, 8% 98%, 0% 88%, 2% 12%)',
+      }}
     >
-      <motion.div
-        className="absolute inset-0"
-        initial={false}
-        animate={
-          reduced
-            ? { clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }
-            : open
-              ? { clipPath: 'inset(0% 0% 0% 0%)', scale: 1.04 }
-              : { clipPath: 'inset(0% 100% 0% 0%)', scale: 1.02 }
-        }
-        transition={{ duration: reduced ? 0 : 0.65, ease: [0.16, 1, 0.3, 1] }}
-      >
-        <motion.img
-          src={portrait}
-          alt=""
-          className="h-full w-full object-cover"
-          style={reduced ? undefined : { x: imgX, y: imgY, scale: 1.08 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-bronze/85 via-bronze/20 to-transparent" />
-      </motion.div>
+      <div className="absolute inset-0 overflow-hidden bg-bronze/40">
+        <motion.div
+          className="absolute inset-0"
+          initial={false}
+          animate={
+            reduced || open
+              ? { clipPath: 'inset(0% 0% 0% 0%)', scale: 1.03 }
+              : { clipPath: 'inset(0% 100% 0% 0%)', scale: 1.01 }
+          }
+          transition={{ duration: reduced ? 0 : 0.65, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.div
+            className="h-full w-full"
+            style={reduced ? undefined : { x: imgX, y: imgY, scale: 1.06 }}
+          >
+            <OptimizedImage
+              src={portrait}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          </motion.div>
+          <div className="absolute inset-0 bg-gradient-to-t from-bronze/90 via-bronze/25 to-transparent" />
+        </motion.div>
+      </div>
 
-      {/* Resting state hint */}
       <div
         className={cn(
           'absolute inset-0 flex items-end p-6 transition-opacity duration-500',
@@ -114,20 +139,14 @@ export function HostPortraitReveal({
           <p className="mt-2 font-hand text-3xl font-semibold text-cream md:text-4xl">
             {name}
           </p>
-          <p className="mt-2 text-xs text-cream/45">Hover or tap to reveal</p>
         </div>
       </div>
 
-      {/* Overlay content */}
       <motion.div
         className="absolute inset-x-0 bottom-0 z-10 p-6 md:p-8"
         initial={false}
-        animate={
-          open
-            ? { opacity: 1, y: 0 }
-            : { opacity: 0, y: 16 }
-        }
-        transition={{ duration: 0.5, delay: open ? 0.15 : 0, ease: [0.16, 1, 0.3, 1] }}
+        animate={open ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
+        transition={{ duration: 0.45, delay: open ? 0.12 : 0, ease: [0.16, 1, 0.3, 1] }}
       >
         <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-cream/55">
           {role}

@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local reference images (not for version control)
+src/assets/errorstofix/
+src/assets/voicescomp/

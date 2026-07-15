@@ -37,7 +37,7 @@ export function FloatingAudioPlayer() {
         )}
       >
         <div className="flex items-center gap-3 p-3 md:p-4">
-          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg">
+          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-bronze/40">
             <motion.img
               src={current.imageUrl}
               alt=""
@@ -47,6 +47,10 @@ export function FloatingAudioPlayer() {
                 duration: 12,
                 ease: 'linear',
                 repeat: isPlaying ? Infinity : 0,
+              }}
+              onError={(e) => {
+                const img = e.currentTarget
+                img.style.display = 'none'
               }}
             />
           </div>

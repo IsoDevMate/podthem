@@ -6,6 +6,7 @@ import { ImageLayoutSync } from '@/motion/ImageLayoutSync'
 import { PageMorphTransition } from '@/motion/PageMorphTransition'
 import { AudioPlayerProvider } from '@/motion/AudioPlayerProvider'
 import { SoundProvider, SoundToggle } from '@/motion/SoundDesign'
+import { ScrollToTop } from '@/motion/ScrollToTop'
 import { CustomCursor } from '@/components/CustomCursor'
 import { Preloader } from '@/components/Preloader'
 import { FloatingAudioPlayer } from '@/components/FloatingAudioPlayer'
@@ -20,6 +21,7 @@ export default function App() {
         <AppReadyProvider>
           <SoundProvider>
             <AudioPlayerProvider>
+              <ScrollToTop />
               <Preloader />
               <ScrollLayoutSync />
               <ImageLayoutSync />

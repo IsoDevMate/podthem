@@ -13,9 +13,22 @@ import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger)
 
+function useIsMobile(bp = 768) {
+  const [mobile, setMobile] = useState(
+    () => typeof window !== 'undefined' && window.innerWidth < bp,
+  )
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${bp - 1}px)`)
+    const sync = () => setMobile(mq.matches)
+    sync()
+    mq.addEventListener('change', sync)
+    return () => mq.removeEventListener('change', sync)
+  }, [bp])
+  return mobile
+}
+
 /**
- * 3D episode stack on a locked cream surface.
- * Never transparent — blank body colours cannot punch through.
+ * 3D episode stack on desktop; clean staggered card list on mobile.
  */
 export function EpisodeWaterfall({
   label = 'The Series',
@@ -30,13 +43,14 @@ export function EpisodeWaterfall({
   const facesRef = useRef<(HTMLDivElement | null)[]>([])
   const [activeIndex, setActiveIndex] = useState(0)
   const reduced = useReducedMotion()
+  const mobile = useIsMobile()
   const pinReady = usePinReady()
   const refreshScroll = useScrollRefresh()
   const mouseRef = useRef({ x: 0, y: 0 })
   const progressRef = useRef(0)
 
   useEffect(() => {
-    if (!pinReady || reduced || !sectionRef.current || !stageRef.current) return
+    if (mobile || !pinReady || reduced || !sectionRef.current || !stageRef.current) return
     if (sectionRef.current.closest('[data-outgoing-page]')) return
 
     const cards = cardsRef.current.filter(Boolean) as HTMLDivElement[]
@@ -161,6 +175,29 @@ export function EpisodeWaterfall({
     }
   }, [pinReady, reduced, refreshScroll])
 
+  // ── Mobile: plain staggered card list ────────────────────────────────────
+  if (mobile || reduced) {
+    return (
+      <section
+        id="episodes"
+        className="relative bg-gradient-to-b from-[#f6f0e4] via-[#f6f0e4] to-[#ebe3d2] px-6 py-16"
+      >
+        <span className="font-mono text-xs uppercase tracking-[0.3em] text-bronze-muted">
+          {label}
+        </span>
+        <h2 className="mt-2 mb-10 font-hand text-4xl font-semibold tracking-tight text-bronze">
+          {headline}
+        </h2>
+        <div className="space-y-8">
+          {episodes.map((episode, i) => (
+            <MobileEpisodeCard key={episode.id} episode={episode} index={i} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  // ── Desktop: 3D pinned stack ──────────────────────────────────────────────
   return (
     <section id="episodes" ref={sectionRef} className="relative bg-gradient-to-b from-[#f6f0e4] via-[#f6f0e4] to-[#ebe3d2]">
       <div className="relative flex min-h-screen flex-col px-6 py-20 md:px-12 lg:px-20">
@@ -238,6 +275,56 @@ export function EpisodeWaterfall({
         </div>
       </div>
     </section>
+  )
+}
+
+function MobileEpisodeCard({ episode, index }: { episode: Episode; index: number }) {
+  const { playEpisode } = useAudioPlayer()
+  return (
+    <div
+      className="flex gap-4"
+      style={{ animationDelay: `${index * 80}ms` }}
+    >
+      <Link
+        to={`/episode/${episode.id}`}
+        onClick={(e) => onMorphNavigate(e, 'card', episode.imageUrl)}
+        className="relative aspect-[3/4] w-28 shrink-0 overflow-hidden bg-cream-dark"
+      >
+        <img
+          src={episode.imageUrl}
+          alt={episode.title}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
+        <span className="absolute bottom-2 left-2 font-mono text-[9px] tracking-widest text-cream">
+          EP {String(episode.episodeNumber).padStart(2, '0')}
+        </span>
+      </Link>
+      <div className="flex flex-col justify-center">
+        <h3 className="font-hand text-xl font-semibold leading-tight text-bronze">
+          {episode.title}
+        </h3>
+        <p className="mt-2 line-clamp-3 text-xs leading-relaxed text-bronze-muted">
+          {episode.description}
+        </p>
+        <div className="mt-3 flex gap-4">
+          <button
+            type="button"
+            onClick={() => playEpisode(episode)}
+            className="text-[10px] uppercase tracking-[0.2em] text-bronze"
+          >
+            Play →
+          </button>
+          <Link
+            to={`/episode/${episode.id}`}
+            onClick={(e) => onMorphNavigate(e, 'card', episode.imageUrl)}
+            className="text-[10px] uppercase tracking-[0.2em] text-bronze-muted"
+          >
+            Details
+          </Link>
+        </div>
+      </div>
+    </div>
   )
 }
 

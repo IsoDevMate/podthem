@@ -119,11 +119,11 @@ export function InteractiveListenOrbit() {
   return (
     <div
       ref={rootRef}
-      className="relative mx-auto flex min-h-[70vh] w-full max-w-5xl flex-col items-center justify-center px-6 py-16"
+      className="relative mx-auto flex w-full max-w-5xl flex-col items-center justify-center overflow-hidden px-6 py-16"
     >
-      {/* Stat bars — values only via aria */}
+      {/* Stat bars */}
       <div
-        className="absolute bottom-10 left-1/2 flex -translate-x-1/2 items-end gap-3 md:gap-5"
+        className="mb-10 flex items-end gap-3 md:gap-5"
         role="list"
         aria-label="Community reach"
       >
@@ -153,8 +153,8 @@ export function InteractiveListenOrbit() {
         })}
       </div>
 
-      {/* Orbital rings */}
-      <div className="relative flex h-[min(72vw,420px)] w-[min(72vw,420px)] items-center justify-center">
+      {/* Orbital rings — contained in a square, never bleeds outside */}
+      <div className="relative flex h-[min(80vw,420px)] w-[min(80vw,420px)] items-center justify-center overflow-hidden">
         {[1, 2, 3].map((n) => (
           <div
             key={n}

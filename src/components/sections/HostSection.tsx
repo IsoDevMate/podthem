@@ -84,15 +84,16 @@ export function HostSection({
         HOST
       </p>
 
+      {/* Orbit ring — clipped so it never overflows on mobile */}
       <div
         data-host-orbit
-        className="pointer-events-none absolute top-[15%] right-[8%] h-40 w-40 rounded-full border border-cream/15 md:h-56 md:w-56"
+        className="pointer-events-none absolute top-[10%] right-0 h-36 w-36 translate-x-1/3 rounded-full border border-cream/15 md:right-[8%] md:h-56 md:w-56 md:translate-x-0"
         aria-hidden
       >
         <span className="absolute top-0 left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-cream/40" />
       </div>
 
-      <div className="relative grid min-h-screen grid-cols-1 items-end gap-10 px-6 py-24 md:px-12 lg:grid-cols-2 lg:items-center lg:px-20">
+      <div className="relative grid min-h-screen grid-cols-1 items-start gap-10 px-6 py-20 md:items-end md:px-12 lg:grid-cols-2 lg:items-center lg:px-20">
         <HostPortraitReveal
           name={name}
           role={role}
@@ -100,6 +101,7 @@ export function HostSection({
           description={bio[0] ?? ''}
           profileHref="/about"
           episodesHref="/episodes"
+          revealOnView={true}
           className="justify-self-center lg:justify-self-start"
         />
 

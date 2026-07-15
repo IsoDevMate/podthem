@@ -96,12 +96,25 @@ export function UpcomingEpisodeStrip({ upcoming }: UpcomingEpisodeStripProps) {
           <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-bronze-muted">
             {done ? 'Recording window open' : 'Countdown'}
           </p>
-          <p
-            className="font-mono text-3xl tracking-[0.12em] text-bronze md:text-4xl"
+          {/* Single row — digits never wrap */}
+          <div
+            className="flex items-baseline gap-1 font-mono tracking-[0.08em] text-bronze"
             aria-live="polite"
+            aria-label={`${pad(d)} days, ${pad(h)} hours, ${pad(m)} minutes, ${pad(s)} seconds`}
           >
-            {pad(d)} : {pad(h)} : {pad(m)} : {pad(s)}
-          </p>
+            {[
+              { v: pad(d), u: 'd' },
+              { v: pad(h), u: 'h' },
+              { v: pad(m), u: 'm' },
+              { v: pad(s), u: 's' },
+            ].map(({ v, u }, i) => (
+              <span key={u} className="flex items-baseline gap-0.5">
+                {i > 0 && <span className="mx-0.5 text-xl text-bronze/40 md:text-2xl">:</span>}
+                <span className="tabular-nums text-2xl md:text-4xl">{v}</span>
+                <span className="text-[9px] uppercase tracking-widest text-bronze-muted md:text-[10px]">{u}</span>
+              </span>
+            ))}
+          </div>
           <a
             href={upcoming.notifyHref ?? '#community'}
             className="inline-flex h-11 items-center border border-bronze/25 px-6 text-xs uppercase tracking-[0.22em] text-bronze transition-colors hover:bg-bronze hover:text-cream"
